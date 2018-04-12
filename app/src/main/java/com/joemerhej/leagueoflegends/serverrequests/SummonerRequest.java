@@ -3,6 +3,7 @@ package com.joemerhej.leagueoflegends.serverrequests;
 import android.util.Log;
 
 import com.joemerhej.leagueoflegends.apis.SummonerApi;
+import com.joemerhej.leagueoflegends.enums.Region;
 import com.joemerhej.leagueoflegends.pojos.Summoner;
 
 import retrofit2.Call;
@@ -14,11 +15,11 @@ import retrofit2.Retrofit;
  * Created by Joe Merhej on 4/13/18.
  */
 
-public class SummonerRequestEUNE
+public class SummonerRequest
 {
-    private static final String TAG = "SREUNE";
+    private static final String TAG = "SummonerRequest";
 
-    private final String mBaseUrl = "https://eun1.api.riotgames.com/";
+    private String mBaseUrl = "";
     private Retrofit mRetrofit;
     private SummonerApi mSummonerApi;
 
@@ -31,8 +32,9 @@ public class SummonerRequestEUNE
 
 
 
-    public SummonerRequestEUNE()
+    public SummonerRequest(Region region)
     {
+        mBaseUrl = "https://" + region.getCode() + ".api.riotgames.com/";
         mRetrofit = RetrofitClient.getClient(mBaseUrl);
         mSummonerApi = mRetrofit.create(SummonerApi.class);
     }
