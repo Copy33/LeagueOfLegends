@@ -41,9 +41,9 @@
 
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/profile_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/rank_image"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/response2"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/response2"/>
+        android:src="@drawable/account_box"/>
 </RelativeLayout>

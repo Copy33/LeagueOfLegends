@@ -22,7 +22,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
 {
     // constants
-    private final String mApiKey = "RGAPI-6fd824ab-99ce-4d29-a835-447a1fcbf599";
+    private final String mApiKey = "RGAPI-8183d44f-46a4-4c5a-9b9b-7beb1c323247";
 
     // properties
     private Profile mProfile;
@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity
         mProfileIcon = findViewById(R.id.profile_icon);
 
         getSummonerProfileAndRankedData();
-
     }
 
 
@@ -143,6 +142,7 @@ public class MainActivity extends AppCompatActivity
 
                     Picasso.get()
                            .load(iconUrl)
+                           .fit()
                            .into(mProfileIcon);
                 }
                 else
