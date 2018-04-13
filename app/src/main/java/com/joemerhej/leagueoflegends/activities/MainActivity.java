@@ -12,7 +12,9 @@ import com.joemerhej.leagueoflegends.models.Profile;
 import com.joemerhej.leagueoflegends.models.QueueRank;
 import com.joemerhej.leagueoflegends.pojos.RankedData;
 import com.joemerhej.leagueoflegends.pojos.Summoner;
+import com.joemerhej.leagueoflegends.serverrequests.GeneralRequest;
 import com.joemerhej.leagueoflegends.serverrequests.SummonerRequest;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity
     private TextView mResponse2;
     private TextView mProfileTextView;
     private ImageView mRankImage;
+    private ImageView mProfileIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -43,9 +46,15 @@ public class MainActivity extends AppCompatActivity
         mResponse2 = findViewById(R.id.response2);
         mProfileTextView = findViewById(R.id.profile);
         mRankImage = findViewById(R.id.rank_image);
+        mProfileIcon = findViewById(R.id.profile_icon);
+
+        getSummonerProfileAndRankedData();
+
+    }
 
 
-
+    void getSummonerProfileAndRankedData()
+    {
         final SummonerRequest summonerRequest = new SummonerRequest(Region.EUNE);
         summonerRequest.getSummoner("mojojo", mApiKey, new SummonerRequest.SummonerResponseCallback<Summoner>()
         {
@@ -89,6 +98,8 @@ public class MainActivity extends AppCompatActivity
 
                                 final int id = getResources().getIdentifier(mProfile.getSoloDuo().getRank().getName().toLowerCase(), "drawable", getPackageName());
                                 mRankImage.setImageResource(id);
+
+                                getPatchVersionsAndSummonerIcon();
                             }
                             else if(error != null)
                             {
@@ -103,7 +114,7 @@ public class MainActivity extends AppCompatActivity
                         }
                     });
                 }
-                else if(error != null)
+                else
                 {
                     mResponse1.setText("ERROR: " + error);
                 }
@@ -115,6 +126,71 @@ public class MainActivity extends AppCompatActivity
                 mResponse1.setText("ERROR: " + t.getLocalizedMessage());
             }
         });
+    }
 
+    void getPatchVersionsAndSummonerIcon()
+    {
+        final GeneralRequest generalRequest = new GeneralRequest(Region.EUNE);
+        generalRequest.getPatchVersions(mApiKey, new GeneralRequest.GeneralResponseCallback<List<String>>()
+        {
+            @Override
+            public void onResponse(List<String> response, String error)
+            {
+                if(response != null && error == null)
+                {
+                    String currentPatch = response.get(0);
+                    String iconUrl = "https://ddragon.leagueoflegends.com/cdn/" + currentPatch + "/img/profileicon/" + mProfile.getProfileIconId().toString() + ".png";
+
+                    Picasso.get()
+                           .load(iconUrl)
+                           .into(mProfileIcon);
+                }
+                else
+                {
+                    mResponse1.setText("ERROR: " + error);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t)
+            {
+                mResponse1.setText("ERROR: " + t.getLocalizedMessage());
+            }
+        });
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
