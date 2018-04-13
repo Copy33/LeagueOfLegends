@@ -28,11 +28,10 @@ public class MainActivity extends AppCompatActivity
     private Profile mProfile;
 
     // views
-    private TextView mResponse1;
-    private TextView mResponse2;
-    private TextView mProfileTextView;
-    private ImageView mRankImage;
     private ImageView mProfileIcon;
+    private TextView mProfileName;
+    private ImageView mRankImage;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -42,9 +41,7 @@ public class MainActivity extends AppCompatActivity
 
         mProfile = new Profile();     //TODO: mock profile in its default constructor to show default values
 
-        mResponse1 = findViewById(R.id.response1);
-        mResponse2 = findViewById(R.id.response2);
-        mProfileTextView = findViewById(R.id.profile);
+        mProfileName = findViewById(R.id.profile_name);
         mRankImage = findViewById(R.id.rank_image);
         mProfileIcon = findViewById(R.id.profile_icon);
 
@@ -63,7 +60,6 @@ public class MainActivity extends AppCompatActivity
                 if(response != null && error == null)
                 {
                     mProfile.set(response.getName(), response.getId(), response.getProfileIconId(), response.getSummonerLevel());
-                    mResponse1.setText(response.toString());
 
                     summonerRequest.getLeagueRanks(mProfile.getId().toString(), mApiKey, new SummonerRequest.SummonerResponseCallback<List<RankedData>>()
                     {
@@ -72,8 +68,6 @@ public class MainActivity extends AppCompatActivity
                         {
                             if(response != null && error == null)
                             {
-                                mResponse2.setText(response.toString());
-
                                 for(RankedData rankedData : response)
                                 {
                                     switch(QueueType.from(rankedData.getQueueType()))
@@ -93,8 +87,8 @@ public class MainActivity extends AppCompatActivity
                                     }
                                 }
 
-                                mProfileTextView.setText(mProfile.toString());
-
+                                // fill in the views
+                                mProfileName.setText(mProfile.getName());
                                 final int id = getResources().getIdentifier(mProfile.getSoloDuo().getRank().getName().toLowerCase(), "drawable", getPackageName());
                                 mRankImage.setImageResource(id);
 
@@ -102,27 +96,27 @@ public class MainActivity extends AppCompatActivity
                             }
                             else if(error != null)
                             {
-                                mResponse2.setText("ERROR: " + error);
+                                mProfileName.setText("ERROR: " + error);
                             }
                         }
 
                         @Override
                         public void onFailure(Throwable t)
                         {
-                            mResponse2.setText("ERROR: " + t.getLocalizedMessage());
+                            mProfileName.setText("ERROR: " + t.getLocalizedMessage());
                         }
                     });
                 }
                 else
                 {
-                    mResponse1.setText("ERROR: " + error);
+                    mProfileName.setText("ERROR: " + error);
                 }
             }
 
             @Override
             public void onFailure(Throwable t)
             {
-                mResponse1.setText("ERROR: " + t.getLocalizedMessage());
+                mProfileName.setText("ERROR: " + t.getLocalizedMessage());
             }
         });
     }
@@ -147,14 +141,14 @@ public class MainActivity extends AppCompatActivity
                 }
                 else
                 {
-                    mResponse1.setText("ERROR: " + error);
+                    mProfileName.setText("ERROR: " + error);
                 }
             }
 
             @Override
             public void onFailure(Throwable t)
             {
-                mResponse1.setText("ERROR: " + t.getLocalizedMessage());
+                mProfileName.setText("ERROR: " + t.getLocalizedMessage());
             }
         });
     }

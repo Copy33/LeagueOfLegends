@@ -5,45 +5,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginEnd="10dp"
+    android:layout_marginStart="10dp"
     tools:context="com.joemerhej.leagueoflegends.activities.MainActivity">
 
-    <TextView
-        android:id="@+id/response1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:text="response 1"/>
-
-    <TextView
-        android:id="@+id/response2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="response 2"/>
-
-    <TextView
-        android:id="@+id/profile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:text="profile"/>
 
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/rank_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/response2"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:src="@drawable/unranked"/>
 
-    <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/profile_icon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_below="@+id/response2"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/account_box"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingBottom="20dp"
+        android:paddingTop="20dp">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/profile_icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/account_box"/>
+
+        <TextView
+            android:id="@+id/profile_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="10dp"
+            android:paddingStart="10dp"
+            android:textSize="20sp"/>
+
+    </LinearLayout>
+
 </RelativeLayout>
