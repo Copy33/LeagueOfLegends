@@ -4,7 +4,10 @@ import android.util.Log;
 
 import com.joemerhej.leagueoflegends.apis.SummonerApi;
 import com.joemerhej.leagueoflegends.enums.Region;
+import com.joemerhej.leagueoflegends.pojos.RankedData;
 import com.joemerhej.leagueoflegends.pojos.Summoner;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -24,9 +27,9 @@ public class SummonerRequest
     private SummonerApi mSummonerApi;
 
 
-    public interface SummonerResponseCallback
+    public interface SummonerResponseCallback<T>
     {
-        void onResponse(Summoner response, String error);
+        void onResponse(T response, String error);
         void onFailure(Throwable t);
     }
 
@@ -39,9 +42,9 @@ public class SummonerRequest
         mSummonerApi = mRetrofit.create(SummonerApi.class);
     }
 
-    public void getSummoner(final String summonerName, final String apiKey, final SummonerResponseCallback summonerResponseCallback)
+    public void getSummoner(final String summonerName, final String apiKey, final SummonerResponseCallback<Summoner> summonerResponseCallback)
     {
-        Call<Summoner> call = mSummonerApi.getSummonerInfo(summonerName, apiKey);
+        Call<Summoner> call = mSummonerApi.getSummoner(summonerName, apiKey);
         call.enqueue(new Callback<Summoner>()
         {
             @Override
@@ -76,4 +79,93 @@ public class SummonerRequest
             }
         });
     }
+
+    public void getLeagueRanks(final String summonerId, final String apiKey, final SummonerResponseCallback<List<RankedData>> summonerResponseCallback)
+    {
+        Call<List<RankedData>> call = mSummonerApi.getLeagueRanks(summonerId, apiKey);
+        call.enqueue(new Callback<List<RankedData>>()
+        {
+            @Override
+            public void onResponse(Call<List<RankedData>> call, Response<List<RankedData>> response)
+            {
+                try
+                {
+                    if(response.isSuccessful())
+                    {
+                        summonerResponseCallback.onResponse(response.body(), null);
+                    }
+                    else
+                    {
+                        String message = "Error: " + String.valueOf(response.code()) + " - " + response.message() + "\n" + response.errorBody().string();
+                        summonerResponseCallback.onResponse(null, message);
+                    }
+                }
+                catch(Exception e)
+                {
+                    summonerResponseCallback.onResponse(null, "Server Error");
+                    Log.e(TAG, "Server Error");
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<RankedData>> call, Throwable t)
+            {
+                summonerResponseCallback.onFailure(t);
+                call.cancel();
+                Log.e(TAG, "FAILURE - " + t.toString());
+            }
+        });
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
