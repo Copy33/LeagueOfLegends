@@ -31,12 +31,4 @@
         android:layout_centerHorizontal="true"
         android:text="profile"/>
 
-    <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/rank_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/response2"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/unranked"/>
-
 </RelativeLayout>

@@ -1,7 +1,5 @@
 package com.joemerhej.leagueoflegends.models;
 
-import com.joemerhej.leagueoflegends.enums.QueueType;
-
 /**
  * Created by Joe Merhej on 4/13/18.
  */
@@ -20,10 +18,6 @@ public class Profile
     public Profile()
     {
         name = "";
-        id = 0L;
-        profileIconId = 0L;
-        summonerLevel = 0L;
-        setRanks(new QueueRank(QueueType.SOLO_DUO), new QueueRank(QueueType.FLEX_5V5), new QueueRank(QueueType.FLEX_3V3));
     }
 
     public Profile(String name, Long id, Long profileIconId, Long summonerLevel, QueueRank soloDuo, QueueRank flex5, QueueRank flex3)

@@ -17,17 +17,6 @@ public class QueueRank
 
     public QueueRank()
     {
-        this.rank = Rank.UNRANKED;
-        this.leaguePoints = 0L;
-        this.hotStreak = false;
-    }
-
-    public QueueRank(QueueType queueType)
-    {
-        this.queueType = queueType;
-        this.rank = Rank.UNRANKED;
-        this.leaguePoints = 0L;
-        this.hotStreak = false;
     }
 
     public QueueRank(QueueType queueType, String tier, String rankNumber, Long leaguePoints, Boolean hotStreak) throws IllegalArgumentException
@@ -69,16 +58,6 @@ public class QueueRank
     public void setQueueType(QueueType queueType)
     {
         this.queueType = queueType;
-    }
-
-    public Rank getRank()
-    {
-        return rank;
-    }
-
-    public void setRank(Rank rank)
-    {
-        this.rank = rank;
     }
 
     public Long getLeaguePoints()

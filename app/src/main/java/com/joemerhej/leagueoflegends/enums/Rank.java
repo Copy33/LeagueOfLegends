@@ -35,16 +35,16 @@ public enum Rank
     MASTER("MASTER"),
     CHALLENGER("CHALLENGER_I");
 
-    private final String name;
+    private final String code;
 
-    Rank(String name)
+    Rank(String code)
     {
-        this.name = name;
+        this.code = code;
     }
 
-    public String getName()
+    public String getCode()
     {
-        return name;
+        return code;
     }
 
     public static Rank from(String s)

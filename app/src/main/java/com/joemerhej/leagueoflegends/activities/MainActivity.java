@@ -2,7 +2,6 @@ package com.joemerhej.leagueoflegends.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.joemerhej.leagueoflegends.R;
@@ -29,7 +28,6 @@ public class MainActivity extends AppCompatActivity
     private TextView mResponse1;
     private TextView mResponse2;
     private TextView mProfileTextView;
-    private ImageView mRankImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -42,12 +40,11 @@ public class MainActivity extends AppCompatActivity
         mResponse1 = findViewById(R.id.response1);
         mResponse2 = findViewById(R.id.response2);
         mProfileTextView = findViewById(R.id.profile);
-        mRankImage = findViewById(R.id.rank_image);
 
 
 
         final SummonerRequest summonerRequest = new SummonerRequest(Region.EUNE);
-        summonerRequest.getSummoner("mojojo", mApiKey, new SummonerRequest.SummonerResponseCallback<Summoner>()
+        summonerRequest.getSummoner("Mojojo", mApiKey, new SummonerRequest.SummonerResponseCallback<Summoner>()
         {
             @Override
             public void onResponse(Summoner response, String error)
@@ -74,21 +71,17 @@ public class MainActivity extends AppCompatActivity
                                             mProfile.setFlex5(new QueueRank(QueueType.FLEX_5V5, rankedData.getTier(), rankedData.getRank(), rankedData.getLeaguePoints(), rankedData.getHotStreak()));
                                             break;
                                         case SOLO_DUO:
-                                            mProfile.setSoloDuo(new QueueRank(QueueType.SOLO_DUO, rankedData.getTier(), rankedData.getRank(), rankedData.getLeaguePoints(), rankedData.getHotStreak()));
+                                            mProfile.setSoloDuo(new QueueRank(QueueType.FLEX_5V5, rankedData.getTier(), rankedData.getRank(), rankedData.getLeaguePoints(), rankedData.getHotStreak()));
                                             break;
                                         case FLEX_3V3:
-                                            mProfile.setFlex3(new QueueRank(QueueType.FLEX_3V3, rankedData.getTier(), rankedData.getRank(), rankedData.getLeaguePoints(), rankedData.getHotStreak()));
+                                            mProfile.setFlex3(new QueueRank(QueueType.FLEX_5V5, rankedData.getTier(), rankedData.getRank(), rankedData.getLeaguePoints(), rankedData.getHotStreak()));
                                             break;
                                         default:
-                                            mProfile.setRanks(new QueueRank(QueueType.SOLO_DUO), new QueueRank(QueueType.FLEX_5V5), new QueueRank(QueueType.FLEX_3V3));
                                             break;
                                     }
                                 }
 
                                 mProfileTextView.setText(mProfile.toString());
-
-                                final int id = getResources().getIdentifier(mProfile.getSoloDuo().getRank().getName().toLowerCase(), "drawable", getPackageName());
-                                mRankImage.setImageResource(id);
                             }
                             else if(error != null)
                             {
