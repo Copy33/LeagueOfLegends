@@ -2,8 +2,7 @@
     <string name="app_name">ALeagueRank</string>
 
     <!-- Widget configure activity values -->
-    <string name="appwidget_text">EXAMPLE</string>
-    <string name="configure">Configure</string>
+    <string name="summoner_name">Summoner Name</string>
     <string name="add_widget">Add widget</string>
 
     <!-- Heading for the app widget ID panel. -->

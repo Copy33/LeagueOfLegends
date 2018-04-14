@@ -1,13 +1,17 @@
 package com.joemerhej.leagueoflegends.widget;
 
 import android.app.Activity;
+import android.app.WallpaperManager;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import com.joemerhej.leagueoflegends.R;
 import com.joemerhej.leagueoflegends.sharedpreferences.SharedPreferencesKey;
@@ -18,16 +22,13 @@ import com.joemerhej.leagueoflegends.sharedpreferences.SharedPreferencesManager;
  */
 public class WidgetConfigureActivity extends Activity
 {
-    // constants
-    private static final String PREFS_NAME = "com.joemerhej.leagueoflegends.widget";
-    private static final String PREF_PREFIX_KEY = "appwidget_";
-
     // properties
     int mWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
     // views
-    EditText mWidgetText;
-    Button mAddButton;
+    LinearLayout mBackgroundLinearLayout;
+    EditText mSummonerNameEditText;
+    Button mAddWidgetButton;
 
 
     public WidgetConfigureActivity()
@@ -38,11 +39,20 @@ public class WidgetConfigureActivity extends Activity
     @Override
     public void onCreate(Bundle icicle)
     {
+
+        Log.d("debug", "METHOD - Activity: OnCreate");
+
         super.onCreate(icicle);
 
         // if user cancels, widget isn't created
         setResult(RESULT_CANCELED);
         setContentView(R.layout.widget_configure);
+
+        // initialize activity background to be the device home wallpaper
+        WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
+        Drawable wallpaperDrawable = wallpaperManager.getDrawable();
+        mBackgroundLinearLayout = findViewById(R.id.activity_layout);
+        mBackgroundLinearLayout.setBackground(wallpaperDrawable);
 
         // initialize shared preferences manager
         SharedPreferencesManager.init(this);
@@ -63,12 +73,14 @@ public class WidgetConfigureActivity extends Activity
         }
 
         // initialize the views
-        mWidgetText = findViewById(R.id.appwidget_text);
-        mAddButton = findViewById(R.id.add_button);
+        mSummonerNameEditText = findViewById(R.id.appwidget_text);
+        mAddWidgetButton = findViewById(R.id.add_button);
 
         // fill in the views
-        mWidgetText.setText(SharedPreferencesManager.readWidgetString(SharedPreferencesKey.TEXT_KEY, mWidgetId));
-        mAddButton.setOnClickListener(new View.OnClickListener()
+        mSummonerNameEditText.setText(SharedPreferencesManager.readWidgetString(SharedPreferencesKey.TEXT_KEY, mWidgetId));
+        mSummonerNameEditText.setSelection(mSummonerNameEditText.getText().length());
+
+        mAddWidgetButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
@@ -76,7 +88,7 @@ public class WidgetConfigureActivity extends Activity
                 final Context context = WidgetConfigureActivity.this;
 
                 // When the button is clicked, store the string locally
-                String widgetText = mWidgetText.getText().toString();
+                String widgetText = mSummonerNameEditText.getText().toString();
                 SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.TEXT_KEY, mWidgetId, widgetText);
 
                 // It is the responsibility of the configuration activity to update the app widget

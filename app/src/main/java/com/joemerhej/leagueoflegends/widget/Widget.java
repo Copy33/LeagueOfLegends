@@ -66,7 +66,6 @@ public class Widget extends AppWidgetProvider
 
         views.setOnClickPendingIntent(R.id.button_edit, pendingIntentEdit);
 
-
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
@@ -107,14 +106,6 @@ public class Widget extends AppWidgetProvider
 
             Widget.updateWidget(context, AppWidgetManager.getInstance(context), widgetId);
         }
-//        else if(intent.getAction().equals(EDIT))
-//        {
-//            Log.d("debug", "ACTION - ID " + widgetId + ": Edit ");
-//
-//            // do the edit actions changes...
-//
-//            Widget.updateWidget(context, AppWidgetManager.getInstance(context), widgetId);
-//        }
 
         super.onReceive(context, intent);
     }
