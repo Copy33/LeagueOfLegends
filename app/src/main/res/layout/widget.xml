@@ -69,5 +69,5 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/section_update"
         android:layout_centerHorizontal="true"
-        android:text="@string/widget_button_update"/>
+        android:text="@string/widget_button_refresh"/>
 </RelativeLayout>

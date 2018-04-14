@@ -3,6 +3,9 @@ package com.joemerhej.leagueoflegends.widget;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.joemerhej.leagueoflegends.R;
@@ -20,6 +23,8 @@ public class Widget extends AppWidgetProvider
 
     static void updateWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId)
     {
+        Log.d("debug", "METHOD: UpdateWidget");
+
         // get the data to update from shared preferences
         CharSequence widgetText = SharedPreferencesManager.readWidgetString(SharedPreferencesManager.TEXT_KEY, appWidgetId);
 
@@ -39,6 +44,8 @@ public class Widget extends AppWidgetProvider
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
     {
+        Log.d("debug", "METHOD: OnUpdate");
+
         // There may be multiple widgets active, so update all of them
         for(int appWidgetId : appWidgetIds)
         {
@@ -49,6 +56,8 @@ public class Widget extends AppWidgetProvider
     @Override
     public void onDeleted(Context context, int[] appWidgetIds)
     {
+        Log.d("debug", "METHOD: OnDeleted");
+
         // When the user deletes the widget, delete the preference associated with it
         for(int appWidgetId : appWidgetIds)
         {
@@ -60,6 +69,8 @@ public class Widget extends AppWidgetProvider
     @Override
     public void onEnabled(Context context)
     {
+        Log.d("debug", "METHOD: OnEnabled");
+
         // initialize shared preferences manager
         SharedPreferencesManager.init(context);
     }
@@ -67,7 +78,26 @@ public class Widget extends AppWidgetProvider
     @Override
     public void onDisabled(Context context)
     {
+        Log.d("debug", "METHOD: OnDisabled");
+
         // Enter relevant functionality for when the last widget is disabled
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent)
+    {
+        Log.d("debug", "METHOD: OnReceive");
+
+        // initialize shared preferences manager
+        SharedPreferencesManager.init(context); //TODO: not sure if I need to call init shared prefs on receive
+
+        super.onReceive(context, intent);
+    }
+
+    @Override
+    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions)
+    {
+        Log.d("debug", "METHOD: OnAppWidgetOptionsChanged");
     }
 }
 
