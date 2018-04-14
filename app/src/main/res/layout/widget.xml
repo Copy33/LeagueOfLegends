@@ -5,7 +5,6 @@
                 android:background="#09C"
                 android:padding="@dimen/widget_margin">
 
-    <!-- Panel for Widget ID -->
     <LinearLayout
         android:id="@+id/section_id"
         style="@style/AppWidgetSection"
@@ -34,7 +33,6 @@
             android:text="XX"/>
     </LinearLayout>
 
-    <!-- Panel for widget update date and number of updates -->
     <LinearLayout
         android:id="@+id/section_update"
         style="@style/AppWidgetSection"
@@ -61,13 +59,28 @@
             android:text="@string/date_count_format"/>
     </LinearLayout>
 
-    <!-- Update widget button -->
-    <Button
-        android:id="@+id/button_update"
-        style="@style/AppWidgetButton"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:layout_below="@+id/section_update"
-        android:layout_centerHorizontal="true"
-        android:text="@string/widget_button_refresh"/>
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/button_refresh"
+            style="@style/AppWidgetButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="@string/widget_button_refresh"/>
+
+        <Button
+            style="@style/AppWidgetButton"
+            android:id="@+id/button_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="@string/widget_button_edit"/>
+
+    </LinearLayout>
 </RelativeLayout>

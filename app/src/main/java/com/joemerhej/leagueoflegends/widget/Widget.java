@@ -22,6 +22,10 @@ import java.util.Date;
  */
 public class Widget extends AppWidgetProvider
 {
+    // action names
+    public static String WIDGET_ACTION_REFRESH = "com.joemerhej.leagueoflegends.WIDGET_ACTION_REFRESH";
+    public static String WIDGET_ACTION_EDIT = "com.joemerhej.leagueoflegends.WIDGET_ACTION_EDIT";
+
 
     static void updateWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId)
     {
@@ -44,22 +48,28 @@ public class Widget extends AppWidgetProvider
         views.setTextViewText(R.id.appwidget_id, String.valueOf(appWidgetId));
         views.setTextViewText(R.id.appwidget_update, context.getResources().getString(R.string.date_count_format, widgetCount, dateString));
 
-        // setup update button to send an update request as a pending intent.
-        Intent intentUpdate = new Intent(context, Widget.class);
 
-        // the intent action must be an app widget update.
-        intentUpdate.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        // setup refresh button to send a refresh action as a pending intent, include widget ID as extra,
+        // wrap it in a pending intent to send a broadcast (pass widget id as request code to make each intent unique, and assign pending intent to click handler of button.
+        Intent intentRefresh = new Intent(context, Widget.class);
+        intentRefresh.setAction(WIDGET_ACTION_REFRESH);
+        intentRefresh.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 
-        // include the widget ID to be updated as an intent extra.
-        int[] idArray = new int[]{appWidgetId};
-        intentUpdate.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, idArray);
+        PendingIntent pendingIntentRefresh = PendingIntent.getBroadcast(context, appWidgetId, intentRefresh, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        // wrap it all in a pending intent to send a broadcast.
-        //  use the app widget ID as the request code (2nd argument) so that each intent is unique.
-        PendingIntent pendingUpdate = PendingIntent.getBroadcast(context, appWidgetId, intentUpdate, PendingIntent.FLAG_UPDATE_CURRENT);
+        views.setOnClickPendingIntent(R.id.button_refresh, pendingIntentRefresh);
 
-        // assign the pending intent to the button onClick handler
-        views.setOnClickPendingIntent(R.id.button_update, pendingUpdate);
+
+        // setup edit button to send an edit action as a pending intent, include widget ID as extra,
+        // wrap it in a pending intent to send a broadcast (pass widget id as request code to make each intent unique, and assign pending intent to click handler of button.
+        Intent intentEdit = new Intent(context, Widget.class);
+        intentEdit.setAction(WIDGET_ACTION_EDIT);
+        intentEdit.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+
+        PendingIntent pendingIntentEdit = PendingIntent.getBroadcast(context, appWidgetId, intentEdit, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        views.setOnClickPendingIntent(R.id.button_edit, pendingIntentEdit);
+
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
@@ -68,43 +78,12 @@ public class Widget extends AppWidgetProvider
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
     {
-        Log.d("debug", "METHOD: OnUpdate");
-
         // There may be multiple widgets active, so update all of them
         for(int appWidgetId : appWidgetIds)
         {
+            Log.d("debug", "METHOD: OnUpdate - ID: " + appWidgetId);
             updateWidget(context, appWidgetManager, appWidgetId);
         }
-    }
-
-    @Override
-    public void onDeleted(Context context, int[] appWidgetIds)
-    {
-        Log.d("debug", "METHOD: OnDeleted");
-
-        // When the user deletes the widget, delete the preference associated with it
-        for(int appWidgetId : appWidgetIds)
-        {
-            SharedPreferencesManager.removeWidgetPreference(SPKey.TEXT_KEY, appWidgetId);
-        }
-    }
-
-    // fired when first widget is created
-    @Override
-    public void onEnabled(Context context)
-    {
-        Log.d("debug", "METHOD: OnEnabled");
-
-        // initialize shared preferences manager
-        SharedPreferencesManager.init(context);
-    }
-
-    @Override
-    public void onDisabled(Context context)
-    {
-        Log.d("debug", "METHOD: OnDisabled");
-
-        // Enter relevant functionality for when the last widget is disabled
     }
 
     @Override
@@ -115,13 +94,70 @@ public class Widget extends AppWidgetProvider
         // initialize shared preferences manager
         SharedPreferencesManager.init(context); //TODO: not sure if I need to call init shared prefs on receive
 
+        // get the widget id
+        int widgetId = 0;
+        Bundle extras = intent.getExtras();
+        if(extras != null)
+        {
+            widgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+        }
+
+        // check which action is returned (ie. which button was pressed)
+        if(intent.getAction().equals(WIDGET_ACTION_REFRESH))
+        {
+            Log.d("debug", "ACTION: Refresh - ID: " + widgetId);
+
+            // do the refresh action changes....
+
+            Widget.updateWidget(context, AppWidgetManager.getInstance(context), widgetId);
+        }
+        else if(intent.getAction().equals(WIDGET_ACTION_EDIT))
+        {
+            Log.d("debug", "ACTION: Edit - ID: " + widgetId);
+
+            // do the edit actions changes...
+
+            Widget.updateWidget(context, AppWidgetManager.getInstance(context), widgetId);
+        }
+
         super.onReceive(context, intent);
+    }
+
+    @Override
+    public void onDeleted(Context context, int[] appWidgetIds)
+    {
+        // When the user deletes the widget, delete the preference associated with it
+        for(int appWidgetId : appWidgetIds)
+        {
+            Log.d("debug", "METHOD: OnDeleted - ID: " + appWidgetId);
+
+            SharedPreferencesManager.removeWidgetPreference(SPKey.TEXT_KEY, appWidgetId);
+            SharedPreferencesManager.removeWidgetPreference(SPKey.COUNT_KEY, appWidgetId);
+        }
+    }
+
+    // fired when first widget is created
+    @Override
+    public void onEnabled(Context context)
+    {
+        Log.d("debug", "METHOD: OnEnabled - FIRST WIDGET");
+
+        // initialize shared preferences manager
+        SharedPreferencesManager.init(context);
+    }
+
+    @Override
+    public void onDisabled(Context context)
+    {
+        Log.d("debug", "METHOD: OnDisabled - LAST WIDGET");
+
+        // Enter relevant functionality for when the last widget is disabled
     }
 
     @Override
     public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions)
     {
-        Log.d("debug", "METHOD: OnAppWidgetOptionsChanged");
+        Log.d("debug", "METHOD: OnAppWidgetOptionsChanged - ID: " + appWidgetId);
     }
 }
 

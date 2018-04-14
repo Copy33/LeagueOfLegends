@@ -12,8 +12,9 @@
     <!-- Heading for the updated panel. -->
     <string name="widget_update_label">Last updated</string>
 
-    <!-- Button label for the update button. -->
+    <!-- Button labels. -->
     <string name="widget_button_refresh">Refresh</string>
+    <string name="widget_button_edit">Edit</string>
 
     <!-- Format string for the date & count text view -->
     <string name="date_count_format">%1$d @%2$s</string>

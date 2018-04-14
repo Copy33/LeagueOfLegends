@@ -34,6 +34,7 @@
     <!-- Style for app widget button. -->
     <style name="AppWidgetButton" parent="Base.Widget.AppCompat.Button">
         <item name="android:layout_marginTop">12dp</item>
+        <item name="android:layout_marginBottom">12dp</item>
     </style>
 
 </resources>
