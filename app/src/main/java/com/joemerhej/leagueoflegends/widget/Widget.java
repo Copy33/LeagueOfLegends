@@ -10,7 +10,7 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.joemerhej.leagueoflegends.R;
-import com.joemerhej.leagueoflegends.sharedpreferences.SPKey;
+import com.joemerhej.leagueoflegends.sharedpreferences.SharedPreferencesKey;
 import com.joemerhej.leagueoflegends.sharedpreferences.SharedPreferencesManager;
 
 import java.text.DateFormat;
@@ -22,22 +22,18 @@ import java.util.Date;
  */
 public class Widget extends AppWidgetProvider
 {
-    // action names
-    public static String WIDGET_ACTION_REFRESH = "com.joemerhej.leagueoflegends.WIDGET_ACTION_REFRESH";
-    public static String WIDGET_ACTION_EDIT = "com.joemerhej.leagueoflegends.WIDGET_ACTION_EDIT";
-
 
     static void updateWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId)
     {
-        Log.d("debug", "METHOD: UpdateWidget");
+        Log.d("debug", "METHOD - ID " + appWidgetId + ": UpdateWidget");
 
         // get the data to update from shared preferences
-        CharSequence widgetText = SharedPreferencesManager.readWidgetString(SPKey.TEXT_KEY, appWidgetId);
-        int widgetCount = SharedPreferencesManager.readWidgetInt(SPKey.COUNT_KEY, appWidgetId);
+        CharSequence widgetText = SharedPreferencesManager.readWidgetString(SharedPreferencesKey.TEXT_KEY, appWidgetId);
+        int widgetCount = SharedPreferencesManager.readWidgetInt(SharedPreferencesKey.COUNT_KEY, appWidgetId);
         ++widgetCount;
 
         // save data back to shared preferences after it's updated
-        SharedPreferencesManager.writeWidgetInt(SPKey.COUNT_KEY, appWidgetId, widgetCount);
+        SharedPreferencesManager.writeWidgetInt(SharedPreferencesKey.COUNT_KEY, appWidgetId, widgetCount);
 
         // get the current time.
         String dateString = DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date());
@@ -49,10 +45,10 @@ public class Widget extends AppWidgetProvider
         views.setTextViewText(R.id.appwidget_update, context.getResources().getString(R.string.date_count_format, widgetCount, dateString));
 
 
-        // setup refresh button to send a refresh action as a pending intent, include widget ID as extra,
+        // setup refresh button to send a refresh action to the Widget class as a pending intent, include widget ID as extra,
         // wrap it in a pending intent to send a broadcast (pass widget id as request code to make each intent unique, and assign pending intent to click handler of button.
         Intent intentRefresh = new Intent(context, Widget.class);
-        intentRefresh.setAction(WIDGET_ACTION_REFRESH);
+        intentRefresh.setAction(WidgetAction.REFRESH.getValue());
         intentRefresh.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 
         PendingIntent pendingIntentRefresh = PendingIntent.getBroadcast(context, appWidgetId, intentRefresh, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -60,13 +56,13 @@ public class Widget extends AppWidgetProvider
         views.setOnClickPendingIntent(R.id.button_refresh, pendingIntentRefresh);
 
 
-        // setup edit button to send an edit action as a pending intent, include widget ID as extra,
+        // setup edit button to send an edit action to the Widget Configure Activity as a pending intent, include widget ID as extra,
         // wrap it in a pending intent to send a broadcast (pass widget id as request code to make each intent unique, and assign pending intent to click handler of button.
-        Intent intentEdit = new Intent(context, Widget.class);
-        intentEdit.setAction(WIDGET_ACTION_EDIT);
+        Intent intentEdit = new Intent(context, WidgetConfigureActivity.class);
+        intentEdit.setAction(WidgetAction.EDIT.getValue());
         intentEdit.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 
-        PendingIntent pendingIntentEdit = PendingIntent.getBroadcast(context, appWidgetId, intentEdit, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntentEdit = PendingIntent.getActivity(context, appWidgetId, intentEdit, PendingIntent.FLAG_UPDATE_CURRENT);
 
         views.setOnClickPendingIntent(R.id.button_edit, pendingIntentEdit);
 
@@ -81,7 +77,7 @@ public class Widget extends AppWidgetProvider
         // There may be multiple widgets active, so update all of them
         for(int appWidgetId : appWidgetIds)
         {
-            Log.d("debug", "METHOD: OnUpdate - ID: " + appWidgetId);
+            Log.d("debug", "METHOD - ID " + appWidgetId + ": OnUpdate");
             updateWidget(context, appWidgetManager, appWidgetId);
         }
     }
@@ -89,8 +85,6 @@ public class Widget extends AppWidgetProvider
     @Override
     public void onReceive(Context context, Intent intent)
     {
-        Log.d("debug", "METHOD: OnReceive");
-
         // initialize shared preferences manager
         SharedPreferencesManager.init(context); //TODO: not sure if I need to call init shared prefs on receive
 
@@ -102,23 +96,25 @@ public class Widget extends AppWidgetProvider
             widgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
         }
 
+        Log.d("debug", "METHOD - ID " + widgetId + ": OnReceive");
+
         // check which action is returned (ie. which button was pressed)
-        if(intent.getAction().equals(WIDGET_ACTION_REFRESH))
+        if(intent.getAction().equals(WidgetAction.REFRESH.getValue()))
         {
-            Log.d("debug", "ACTION: Refresh - ID: " + widgetId);
+            Log.d("debug", "ACTION - ID " + widgetId + ": Refresh ");
 
             // do the refresh action changes....
 
             Widget.updateWidget(context, AppWidgetManager.getInstance(context), widgetId);
         }
-        else if(intent.getAction().equals(WIDGET_ACTION_EDIT))
-        {
-            Log.d("debug", "ACTION: Edit - ID: " + widgetId);
-
-            // do the edit actions changes...
-
-            Widget.updateWidget(context, AppWidgetManager.getInstance(context), widgetId);
-        }
+//        else if(intent.getAction().equals(EDIT))
+//        {
+//            Log.d("debug", "ACTION - ID " + widgetId + ": Edit ");
+//
+//            // do the edit actions changes...
+//
+//            Widget.updateWidget(context, AppWidgetManager.getInstance(context), widgetId);
+//        }
 
         super.onReceive(context, intent);
     }
@@ -129,10 +125,10 @@ public class Widget extends AppWidgetProvider
         // When the user deletes the widget, delete the preference associated with it
         for(int appWidgetId : appWidgetIds)
         {
-            Log.d("debug", "METHOD: OnDeleted - ID: " + appWidgetId);
+            Log.d("debug", "METHOD - ID " + appWidgetId + ": OnDeleted");
 
-            SharedPreferencesManager.removeWidgetPreference(SPKey.TEXT_KEY, appWidgetId);
-            SharedPreferencesManager.removeWidgetPreference(SPKey.COUNT_KEY, appWidgetId);
+            SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.TEXT_KEY, appWidgetId);
+            SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.COUNT_KEY, appWidgetId);
         }
     }
 
@@ -157,7 +153,7 @@ public class Widget extends AppWidgetProvider
     @Override
     public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions)
     {
-        Log.d("debug", "METHOD: OnAppWidgetOptionsChanged - ID: " + appWidgetId);
+        Log.d("debug", "METHOD - ID " + appWidgetId + ": OnAppWidgetOptionsChanged");
     }
 }
 

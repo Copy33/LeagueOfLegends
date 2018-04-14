@@ -27,42 +27,42 @@ public class SharedPreferencesManager
             mSharedPref = context.getApplicationContext().getSharedPreferences(context.getApplicationContext().getPackageName(), Context.MODE_PRIVATE);
     }
 
-    public static String readWidgetString(SPKey key, int widgetId)
+    public static String readWidgetString(SharedPreferencesKey key, int widgetId)
     {
         return mSharedPref.getString(WIDGET_KEY_PREFIX + key.getValue() + widgetId, null);
     }
 
-    public static void writeWidgetString(SPKey key, int widgetId, String value)
+    public static void writeWidgetString(SharedPreferencesKey key, int widgetId, String value)
     {
         SharedPreferences.Editor prefsEditor = mSharedPref.edit();
         prefsEditor.putString(WIDGET_KEY_PREFIX + key.getValue() + widgetId, value);
         prefsEditor.apply();
     }
 
-    public static boolean readWidgetBoolean(SPKey key, int widgetId)
+    public static boolean readWidgetBoolean(SharedPreferencesKey key, int widgetId)
     {
         return mSharedPref.getBoolean(WIDGET_KEY_PREFIX + key.getValue() + widgetId, false);
     }
 
-    public static void writeWidgetBoolean(SPKey key, int widgetId, boolean value)
+    public static void writeWidgetBoolean(SharedPreferencesKey key, int widgetId, boolean value)
     {
         SharedPreferences.Editor prefsEditor = mSharedPref.edit();
         prefsEditor.putBoolean(WIDGET_KEY_PREFIX + key.getValue() + widgetId, value);
         prefsEditor.apply();
     }
 
-    public static int readWidgetInt(SPKey key, int widgetId)
+    public static int readWidgetInt(SharedPreferencesKey key, int widgetId)
     {
         return mSharedPref.getInt(WIDGET_KEY_PREFIX + key.getValue() + widgetId, -1);
     }
 
-    public static void writeWidgetInt(SPKey key, int widgetId, int value)
+    public static void writeWidgetInt(SharedPreferencesKey key, int widgetId, int value)
     {
         SharedPreferences.Editor prefsEditor = mSharedPref.edit();
         prefsEditor.putInt(WIDGET_KEY_PREFIX + key.getValue() + widgetId, value).apply();
     }
 
-    public static void removeWidgetPreference(SPKey key, int widgetId)
+    public static void removeWidgetPreference(SharedPreferencesKey key, int widgetId)
     {
         SharedPreferences.Editor prefsEditor = mSharedPref.edit();
         prefsEditor.remove(WIDGET_KEY_PREFIX + key.getValue() + widgetId).apply();

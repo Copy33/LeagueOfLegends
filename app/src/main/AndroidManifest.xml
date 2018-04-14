@@ -35,7 +35,9 @@
         </receiver>
 
         <!-- Widget configure activity -->
-        <activity android:name=".widget.WidgetConfigureActivity">
+        <activity android:name=".widget.WidgetConfigureActivity"
+            android:launchMode="singleInstance"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>

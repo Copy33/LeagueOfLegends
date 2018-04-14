@@ -4,14 +4,14 @@ package com.joemerhej.leagueoflegends.sharedpreferences;
  * Created by Joe Merhej on 4/14/18.
  */
 
-public enum SPKey
+public enum SharedPreferencesKey
 {
     TEXT_KEY("text_"),
     COUNT_KEY("count_");
 
     private final String value;
 
-    SPKey(String value)
+    SharedPreferencesKey(String value)
     {
         this.value = value;
     }
