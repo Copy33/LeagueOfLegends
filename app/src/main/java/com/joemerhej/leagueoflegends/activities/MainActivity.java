@@ -39,13 +39,13 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mProfile = new Profile();     //TODO: mock profile in its default constructor to show default values
+        mProfile = new Profile();
 
         mProfileName = findViewById(R.id.profile_name);
         mRankImage = findViewById(R.id.rank_image);
         mProfileIcon = findViewById(R.id.profile_icon);
 
-        getSummonerProfileAndRankedData();
+        //getSummonerProfileAndRankedData();
     }
 
 
