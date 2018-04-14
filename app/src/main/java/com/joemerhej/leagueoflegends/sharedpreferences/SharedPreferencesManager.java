@@ -16,10 +16,6 @@ public class SharedPreferencesManager
     // private constants
     private static final String WIDGET_KEY_PREFIX = "appwidget_";
 
-    // public constants
-    public static final String TEXT_KEY = "text_";
-    public static final String COUNT_KEY = "count_";
-
 
     private SharedPreferencesManager()
     {
@@ -31,45 +27,45 @@ public class SharedPreferencesManager
             mSharedPref = context.getApplicationContext().getSharedPreferences(context.getApplicationContext().getPackageName(), Context.MODE_PRIVATE);
     }
 
-    public static String readWidgetString(String key, int widgetId)
+    public static String readWidgetString(SPKey key, int widgetId)
     {
-        return mSharedPref.getString(WIDGET_KEY_PREFIX + key + widgetId, null);
+        return mSharedPref.getString(WIDGET_KEY_PREFIX + key.getValue() + widgetId, null);
     }
 
-    public static void writeWidgetString(String key, int widgetId, String value)
+    public static void writeWidgetString(SPKey key, int widgetId, String value)
     {
         SharedPreferences.Editor prefsEditor = mSharedPref.edit();
-        prefsEditor.putString(WIDGET_KEY_PREFIX + key + widgetId, value);
+        prefsEditor.putString(WIDGET_KEY_PREFIX + key.getValue() + widgetId, value);
         prefsEditor.apply();
     }
 
-    public static boolean readWidgetBoolean(String key, int widgetId)
+    public static boolean readWidgetBoolean(SPKey key, int widgetId)
     {
-        return mSharedPref.getBoolean(WIDGET_KEY_PREFIX + key + widgetId, false);
+        return mSharedPref.getBoolean(WIDGET_KEY_PREFIX + key.getValue() + widgetId, false);
     }
 
-    public static void writeWidgetBoolean(String key, int widgetId, boolean value)
+    public static void writeWidgetBoolean(SPKey key, int widgetId, boolean value)
     {
         SharedPreferences.Editor prefsEditor = mSharedPref.edit();
-        prefsEditor.putBoolean(WIDGET_KEY_PREFIX + key + widgetId, value);
+        prefsEditor.putBoolean(WIDGET_KEY_PREFIX + key.getValue() + widgetId, value);
         prefsEditor.apply();
     }
 
-    public static int readWidgetInt(String key, int widgetId)
+    public static int readWidgetInt(SPKey key, int widgetId)
     {
-        return mSharedPref.getInt(WIDGET_KEY_PREFIX + key + widgetId, -1);
+        return mSharedPref.getInt(WIDGET_KEY_PREFIX + key.getValue() + widgetId, -1);
     }
 
-    public static void writeWidgetInt(String key, int widgetId, int value)
+    public static void writeWidgetInt(SPKey key, int widgetId, int value)
     {
         SharedPreferences.Editor prefsEditor = mSharedPref.edit();
-        prefsEditor.putInt(WIDGET_KEY_PREFIX + key + widgetId, value).apply();
+        prefsEditor.putInt(WIDGET_KEY_PREFIX + key.getValue() + widgetId, value).apply();
     }
 
-    public static void removeWidgetPreference(String key, int widgetId)
+    public static void removeWidgetPreference(SPKey key, int widgetId)
     {
         SharedPreferences.Editor prefsEditor = mSharedPref.edit();
-        prefsEditor.remove(WIDGET_KEY_PREFIX + key + widgetId).apply();
+        prefsEditor.remove(WIDGET_KEY_PREFIX + key.getValue() + widgetId).apply();
     }
 }
 

@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.joemerhej.leagueoflegends.R;
+import com.joemerhej.leagueoflegends.sharedpreferences.SPKey;
 import com.joemerhej.leagueoflegends.sharedpreferences.SharedPreferencesManager;
 
 /**
@@ -66,7 +67,7 @@ public class WidgetConfigureActivity extends Activity
         mAddButton = findViewById(R.id.add_button);
 
         // fill in the views
-        mWidgetText.setText(SharedPreferencesManager.readWidgetString(SharedPreferencesManager.TEXT_KEY, mWidgetId));
+        mWidgetText.setText(SharedPreferencesManager.readWidgetString(SPKey.TEXT_KEY, mWidgetId));
         mAddButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -76,7 +77,7 @@ public class WidgetConfigureActivity extends Activity
 
                 // When the button is clicked, store the string locally
                 String widgetText = mWidgetText.getText().toString();
-                SharedPreferencesManager.writeWidgetString(SharedPreferencesManager.TEXT_KEY, mWidgetId, widgetText);
+                SharedPreferencesManager.writeWidgetString(SPKey.TEXT_KEY, mWidgetId, widgetText);
 
                 // It is the responsibility of the configuration activity to update the app widget
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
