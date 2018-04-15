@@ -16,13 +16,6 @@
         android:paddingTop="4dp">
 
         <TextView
-            android:id="@+id/appwidget_update_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/widget_updated_label"
-            android:textSize="12sp"/>
-
-        <TextView
             android:id="@+id/widget_updated_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -57,10 +50,55 @@
     </LinearLayout>
 
     <ImageView
+        android:id="@+id/widget_rank_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:src="@drawable/unranked"/>
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/challenger_i"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/widget_rank_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Platinum IV - 100 LP"
+                android:textColor="@color/white"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/widget_summoner_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mojojo"
+                android:textColor="@color/white"
+                android:textSize="14sp"/>
+        </LinearLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>
 

@@ -81,6 +81,7 @@
         android:text="@string/add_widget"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
+        android:padding="18dp"
         android:textSize="18sp"/>
 
 </LinearLayout>
