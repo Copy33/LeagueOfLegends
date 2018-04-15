@@ -22,6 +22,7 @@ import com.joemerhej.leagueoflegends.pojos.Summoner;
 import com.joemerhej.leagueoflegends.serverrequests.SummonerRequest;
 import com.joemerhej.leagueoflegends.sharedpreferences.SharedPreferencesKey;
 import com.joemerhej.leagueoflegends.sharedpreferences.SharedPreferencesManager;
+import com.joemerhej.leagueoflegends.utils.Utils;
 
 import java.util.List;
 
@@ -30,9 +31,6 @@ import java.util.List;
  */
 public class WidgetConfigureActivity extends Activity
 {
-    // constants
-    private final String mApiKey = "RGAPI-45a15438-c837-4362-8c47-d523c6037b20";
-
     // properties
     private Profile mProfile;
     private int mWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
@@ -109,7 +107,7 @@ public class WidgetConfigureActivity extends Activity
     void getSummonerProfileAndRankedData(final String summonerName)
     {
         final SummonerRequest summonerRequest = new SummonerRequest(Region.EUNE);
-        summonerRequest.getSummoner(summonerName, mApiKey, new SummonerRequest.SummonerResponseCallback<Summoner>()
+        summonerRequest.getSummoner(summonerName, Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<Summoner>()
         {
             @Override
             public void onResponse(Summoner response, String error)
@@ -118,7 +116,7 @@ public class WidgetConfigureActivity extends Activity
                 {
                     mProfile.set(response.getName(), response.getId(), response.getProfileIconId(), response.getSummonerLevel());
 
-                    summonerRequest.getLeagueRanks(mProfile.getId().toString(), mApiKey, new SummonerRequest.SummonerResponseCallback<List<RankedData>>()
+                    summonerRequest.getLeagueRanks(mProfile.getId().toString(), Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<List<RankedData>>()
                     {
                         @Override
                         public void onResponse(List<RankedData> response, String error)
@@ -143,13 +141,6 @@ public class WidgetConfigureActivity extends Activity
                                             break;
                                     }
                                 }
-
-                                // fill in the views
-//                                mProfileName.setText(mProfile.getName());
-//                                final int id = getResources().getIdentifier(mProfile.getSoloDuo().getRank().getName().toLowerCase(), "drawable", getPackageName());
-//                                mRankImage.setImageResource(id);
-
-//                                getPatchVersionsAndSummonerIcon();
 
                                 // get the rank image id
                                 final int rankImageId = getResources().getIdentifier(mProfile.getSoloDuo().getRank().getName().replace(" ", "_").toLowerCase(), "drawable", getPackageName());
@@ -215,7 +206,7 @@ public class WidgetConfigureActivity extends Activity
 //    void getPatchVersionsAndSummonerIcon()
 //    {
 //        final GeneralRequest generalRequest = new GeneralRequest(Region.EUNE);
-//        generalRequest.getPatchVersions(mApiKey, new GeneralRequest.GeneralResponseCallback<List<String>>()
+//        generalRequest.getPatchVersions(Utils.getApiKey(), new GeneralRequest.GeneralResponseCallback<List<String>>()
 //        {
 //            @Override
 //            public void onResponse(List<String> response, String error)

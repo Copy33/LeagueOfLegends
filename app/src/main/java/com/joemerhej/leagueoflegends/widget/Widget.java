@@ -12,12 +12,20 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.joemerhej.leagueoflegends.R;
+import com.joemerhej.leagueoflegends.enums.QueueType;
+import com.joemerhej.leagueoflegends.enums.Region;
+import com.joemerhej.leagueoflegends.models.Profile;
+import com.joemerhej.leagueoflegends.models.QueueRank;
+import com.joemerhej.leagueoflegends.pojos.RankedData;
+import com.joemerhej.leagueoflegends.pojos.Summoner;
+import com.joemerhej.leagueoflegends.serverrequests.SummonerRequest;
 import com.joemerhej.leagueoflegends.sharedpreferences.SharedPreferencesKey;
 import com.joemerhej.leagueoflegends.sharedpreferences.SharedPreferencesManager;
 import com.joemerhej.leagueoflegends.utils.Utils;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Implementation of App Widget functionality.
@@ -101,18 +109,24 @@ public class Widget extends AppWidgetProvider
     }
 
     @Override
-    public void onReceive(Context context, Intent intent)
+    public void onReceive(final Context context, Intent intent)
     {
         // initialize shared preferences manager
         SharedPreferencesManager.init(context); //TODO: not sure if I need to call init shared prefs on receive
 
         // get the widget id
-        int widgetId = 0;
+        final int widgetId;
         Bundle extras = intent.getExtras();
         if(extras != null)
         {
             widgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
         }
+        else
+        {
+            widgetId = 0;
+        }
+
+        final Profile profile = new Profile();
 
         Log.d("debug", "METHOD - ID " + widgetId + ": OnReceive");
 
@@ -121,9 +135,97 @@ public class Widget extends AppWidgetProvider
         {
             Log.d("debug", "ACTION - ID " + widgetId + ": Refresh ");
 
-            // do the refresh action changes....
+            // get the summoner name from shared preferences
+            final String summonerName = SharedPreferencesManager.readWidgetString(SharedPreferencesKey.SUMMONER_NAME, widgetId);
 
-            Widget.updateWidget(context, AppWidgetManager.getInstance(context), widgetId);
+            final SummonerRequest summonerRequest = new SummonerRequest(Region.EUNE);
+            summonerRequest.getSummoner(summonerName, Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<Summoner>()
+            {
+                @Override
+                public void onResponse(Summoner response, String error)
+                {
+                    if(response != null && error == null)
+                    {
+                        profile.set(response.getName(), response.getId(), response.getProfileIconId(), response.getSummonerLevel());
+
+                        summonerRequest.getLeagueRanks(profile.getId().toString(), Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<List<RankedData>>()
+                        {
+                            @Override
+                            public void onResponse(List<RankedData> response, String error)
+                            {
+                                if(response != null && error == null)
+                                {
+                                    for(RankedData rankedData : response)
+                                    {
+                                        switch(QueueType.from(rankedData.getQueueType()))
+                                        {
+                                            case FLEX_5V5:
+                                                profile.setFlex5(new QueueRank(QueueType.FLEX_5V5, rankedData.getTier(), rankedData.getRank(), rankedData.getLeaguePoints(), rankedData.getHotStreak()));
+                                                break;
+                                            case SOLO_DUO:
+                                                profile.setSoloDuo(new QueueRank(QueueType.SOLO_DUO, rankedData.getTier(), rankedData.getRank(), rankedData.getLeaguePoints(), rankedData.getHotStreak()));
+                                                break;
+                                            case FLEX_3V3:
+                                                profile.setFlex3(new QueueRank(QueueType.FLEX_3V3, rankedData.getTier(), rankedData.getRank(), rankedData.getLeaguePoints(), rankedData.getHotStreak()));
+                                                break;
+                                            default:
+                                                profile.setRanks(new QueueRank(QueueType.SOLO_DUO), new QueueRank(QueueType.FLEX_5V5), new QueueRank(QueueType.FLEX_3V3));
+                                                break;
+                                        }
+                                    }
+
+                                    // get the rank image id
+                                    final int rankImageId = context.getResources().getIdentifier(profile.getSoloDuo().getRank().getName().replace(" ", "_").toLowerCase(), "drawable", context.getPackageName());
+
+                                    // store the info locally
+                                    SharedPreferencesManager.writeWidgetInt(SharedPreferencesKey.RANK_IMAGE_RES_ID, widgetId, rankImageId);
+
+                                    SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.SUMMONER_NAME, widgetId, summonerName);
+                                    SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_ID, widgetId, profile.getId());
+                                    SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_ICON_ID, widgetId, profile.getProfileIconId());
+                                    SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_LEVEL, widgetId, profile.getSummonerLevel());
+
+                                    SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.SUMMONER_SOLO_DUO_RANK, widgetId, profile.getSoloDuo().getRank().getName());
+                                    SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_SOLO_DUO_LP, widgetId, profile.getSoloDuo().getLeaguePoints());
+                                    SharedPreferencesManager.writeWidgetBoolean(SharedPreferencesKey.SUMMONER_SOLO_DUO_HOTSTREAK, widgetId, profile.getSoloDuo().getHotStreak());
+
+                                    SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.SUMMONER_FLEX_5_RANK, widgetId, profile.getFlex5().getRank().getName());
+                                    SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_FLEX_5_LP, widgetId, profile.getFlex5().getLeaguePoints());
+                                    SharedPreferencesManager.writeWidgetBoolean(SharedPreferencesKey.SUMMONER_FLEX_5_HOTSTREAK, widgetId, profile.getFlex5().getHotStreak());
+
+                                    SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.SUMMONER_FLEX_3_RANK, widgetId, profile.getFlex3().getRank().getName());
+                                    SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_FLEX_3_LP, widgetId, profile.getFlex3().getLeaguePoints());
+                                    SharedPreferencesManager.writeWidgetBoolean(SharedPreferencesKey.SUMMONER_FLEX_3_HOTSTREAK, widgetId, profile.getFlex3().getHotStreak());
+
+                                    // it is the responsibility of the configuration activity to update the app widget
+                                    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+                                    Widget.updateWidget(context, appWidgetManager, widgetId);
+                                }
+                                else if(error != null)
+                                {
+                                    Log.e("debug", "ERROR - 1: " + error);
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Throwable t)
+                            {
+                                Log.e("debug", "ERROR - 2: " + t.getLocalizedMessage());
+                            }
+                        });
+                    }
+                    else
+                    {
+                        Log.e("debug", "ERROR - 3: " + error);
+                    }
+                }
+
+                @Override
+                public void onFailure(Throwable t)
+                {
+                    Log.e("debug", "ERROR - 4: " + t.getLocalizedMessage());
+                }
+            });
         }
 
         super.onReceive(context, intent);
@@ -137,8 +239,21 @@ public class Widget extends AppWidgetProvider
         {
             Log.d("debug", "METHOD - ID " + appWidgetId + ": OnDeleted");
 
-            SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.SUMMONER_NAME, appWidgetId);
             SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.COUNT, appWidgetId);
+            SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.RANK_IMAGE_RES_ID, appWidgetId);
+            SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.SUMMONER_NAME, appWidgetId);
+            SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.SUMMONER_ID, appWidgetId);
+            SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.SUMMONER_ICON_ID, appWidgetId);
+            SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.SUMMONER_LEVEL, appWidgetId);
+            SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.SUMMONER_SOLO_DUO_RANK, appWidgetId);
+            SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.SUMMONER_SOLO_DUO_LP, appWidgetId);
+            SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.SUMMONER_SOLO_DUO_HOTSTREAK, appWidgetId);
+            SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.SUMMONER_FLEX_5_RANK, appWidgetId);
+            SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.SUMMONER_FLEX_5_LP, appWidgetId);
+            SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.SUMMONER_FLEX_5_HOTSTREAK, appWidgetId);
+            SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.SUMMONER_FLEX_3_RANK, appWidgetId);
+            SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.SUMMONER_FLEX_3_LP, appWidgetId);
+            SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.SUMMONER_FLEX_3_HOTSTREAK, appWidgetId);
         }
     }
 

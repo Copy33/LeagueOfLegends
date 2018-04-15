@@ -48,4 +48,9 @@ public final class Utils
         return value;
     }
 
+    public static String getApiKey()
+    {
+        return "RGAPI-c5a68781-eac8-4db1-8e39-e6c1b9ce2c5a";
+    }
+
 }

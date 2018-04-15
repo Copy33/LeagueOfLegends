@@ -14,6 +14,7 @@ import com.joemerhej.leagueoflegends.pojos.RankedData;
 import com.joemerhej.leagueoflegends.pojos.Summoner;
 import com.joemerhej.leagueoflegends.serverrequests.GeneralRequest;
 import com.joemerhej.leagueoflegends.serverrequests.SummonerRequest;
+import com.joemerhej.leagueoflegends.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -21,9 +22,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
 {
-    // constants
-    private final String mApiKey = "RGAPI-8183d44f-46a4-4c5a-9b9b-7beb1c323247";
-
     // properties
     private Profile mProfile;
 
@@ -52,7 +50,7 @@ public class MainActivity extends AppCompatActivity
     void getSummonerProfileAndRankedData()
     {
         final SummonerRequest summonerRequest = new SummonerRequest(Region.EUNE);
-        summonerRequest.getSummoner("mojojo", mApiKey, new SummonerRequest.SummonerResponseCallback<Summoner>()
+        summonerRequest.getSummoner("mojojo", Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<Summoner>()
         {
             @Override
             public void onResponse(Summoner response, String error)
@@ -61,7 +59,7 @@ public class MainActivity extends AppCompatActivity
                 {
                     mProfile.set(response.getName(), response.getId(), response.getProfileIconId(), response.getSummonerLevel());
 
-                    summonerRequest.getLeagueRanks(mProfile.getId().toString(), mApiKey, new SummonerRequest.SummonerResponseCallback<List<RankedData>>()
+                    summonerRequest.getLeagueRanks(mProfile.getId().toString(), Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<List<RankedData>>()
                     {
                         @Override
                         public void onResponse(List<RankedData> response, String error)
@@ -124,7 +122,7 @@ public class MainActivity extends AppCompatActivity
     void getPatchVersionsAndSummonerIcon()
     {
         final GeneralRequest generalRequest = new GeneralRequest(Region.EUNE);
-        generalRequest.getPatchVersions(mApiKey, new GeneralRequest.GeneralResponseCallback<List<String>>()
+        generalRequest.getPatchVersions(Utils.getApiKey(), new GeneralRequest.GeneralResponseCallback<List<String>>()
         {
             @Override
             public void onResponse(List<String> response, String error)
