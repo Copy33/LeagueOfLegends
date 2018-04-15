@@ -39,7 +39,6 @@ public class WidgetConfigureActivity extends Activity
     @Override
     public void onCreate(Bundle icicle)
     {
-
         Log.d("debug", "METHOD - Activity: OnCreate");
 
         super.onCreate(icicle);
@@ -90,6 +89,7 @@ public class WidgetConfigureActivity extends Activity
                 // When the button is clicked, store the string locally
                 String widgetText = mSummonerNameEditText.getText().toString();
                 SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.TEXT_KEY, mWidgetId, widgetText);
+                SharedPreferencesManager.writeWidgetInt(SharedPreferencesKey.COUNT_KEY, mWidgetId, 0);
 
                 // It is the responsibility of the configuration activity to update the app widget
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);

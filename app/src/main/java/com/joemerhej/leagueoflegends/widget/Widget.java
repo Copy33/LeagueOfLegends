@@ -41,8 +41,7 @@ public class Widget extends AppWidgetProvider
         // get the widget's views (from widget or widget activity) and update them
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
         views.setTextViewText(R.id.appwidget_text, widgetText);
-        views.setTextViewText(R.id.appwidget_id, String.valueOf(appWidgetId));
-        views.setTextViewText(R.id.appwidget_update, context.getResources().getString(R.string.date_count_format, widgetCount, dateString));
+        views.setTextViewText(R.id.widget_updated_text, context.getResources().getString(R.string.date_format, widgetCount, dateString));
 
 
         // setup refresh button to send a refresh action to the Widget class as a pending intent, include widget ID as extra,

@@ -2,85 +2,84 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#09C"
+                android:background="#aaaaaaaa"
                 android:padding="@dimen/widget_margin">
 
     <LinearLayout
-        android:id="@+id/section_id"
-        style="@style/AppWidgetSection"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/appwidget_id_label"
-            style="@style/AppWidgetLabel"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:text="@string/widget_id_label"/>
-
-        <TextView
-            android:id="@+id/appwidget_id"
-            style="@style/AppWidgetText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="end"
-            android:text="XX"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/section_update"
-        style="@style/AppWidgetSection"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/section_id"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="4dp"
+        android:paddingEnd="8dp"
+        android:paddingStart="8dp"
+        android:paddingTop="4dp">
 
         <TextView
             android:id="@+id/appwidget_update_label"
-            style="@style/AppWidgetLabel"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="2dp"
-            android:text="@string/widget_update_label"/>
+            android:text="@string/widget_updated_label"
+            android:textSize="12sp"/>
 
         <TextView
-            android:id="@+id/appwidget_update"
-            style="@style/AppWidgetText"
-            android:layout_width="match_parent"
+            android:id="@+id/widget_updated_text"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/date_count_format"/>
+            android:text="@string/date_format"
+            android:textSize="12sp"/>
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@+id/section_update"
-        android:gravity="center">
+        android:layout_alignParentEnd="true"
+        android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/button_refresh"
-            style="@style/AppWidgetButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="@string/widget_button_refresh"/>
-
-        <Button
-            style="@style/AppWidgetButton"
+        <ImageButton
             android:id="@+id/button_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="@string/widget_button_edit"/>
+            android:background="?android:selectableItemBackground"
+            android:contentDescription="@string/widget_button_edit"
+            android:padding="6dp"
+            android:src="@drawable/button_edit"/>
+
+        <ImageButton
+            android:id="@+id/button_refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?android:selectableItemBackground"
+            android:contentDescription="@string/widget_button_refresh"
+            android:padding="6dp"
+            android:src="@drawable/button_refresh"/>
 
     </LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:src="@drawable/unranked"/>
+
 </RelativeLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
