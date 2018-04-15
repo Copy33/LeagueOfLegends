@@ -41,9 +41,9 @@ public class MainActivity extends AppCompatActivity
 
         mProfile = new Profile();
 
-        mProfileName = findViewById(R.id.profile_name);
-        mRankImage = findViewById(R.id.rank_image);
-        mProfileIcon = findViewById(R.id.profile_icon);
+        mProfileName = findViewById(R.id.mainactivity_profile_name);
+        mRankImage = findViewById(R.id.mainactivity_rank_image);
+        mProfileIcon = findViewById(R.id.mainactivity_profile_icon);
 
         //getSummonerProfileAndRankedData();
     }

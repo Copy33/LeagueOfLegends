@@ -29,7 +29,7 @@ public class SharedPreferencesManager
 
     public static String readWidgetString(SharedPreferencesKey key, int widgetId)
     {
-        return mSharedPref.getString(WIDGET_KEY_PREFIX + key.getValue() + widgetId, null);
+        return mSharedPref.getString(WIDGET_KEY_PREFIX + key.getValue() + widgetId, "");
     }
 
     public static void writeWidgetString(SharedPreferencesKey key, int widgetId, String value)
@@ -60,6 +60,30 @@ public class SharedPreferencesManager
     {
         SharedPreferences.Editor prefsEditor = mSharedPref.edit();
         prefsEditor.putInt(WIDGET_KEY_PREFIX + key.getValue() + widgetId, value).apply();
+    }
+
+    public static Long readWidgetLong(SharedPreferencesKey key, int widgetId)
+    {
+        String longString = mSharedPref.getString(WIDGET_KEY_PREFIX + key.getValue() + widgetId, "");
+
+        Long result = 0L;
+        try
+        {
+            result = Long.valueOf(longString);
+        }
+        catch(NumberFormatException e)
+        {
+            return 0L;
+        }
+
+        return result;
+    }
+
+    public static void writeWidgetLong(SharedPreferencesKey key, int widgetId, Long value)
+    {
+        SharedPreferences.Editor prefsEditor = mSharedPref.edit();
+        prefsEditor.putString(WIDGET_KEY_PREFIX + key.getValue() + widgetId, value.toString());
+        prefsEditor.apply();
     }
 
     public static void removeWidgetPreference(SharedPreferencesKey key, int widgetId)

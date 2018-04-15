@@ -64,8 +64,8 @@ public class SummonerRequest
                 }
                 catch(Exception e)
                 {
-                    summonerResponseCallback.onResponse(null, "Server Error");
-                    Log.e(TAG, "Server Error");
+                    summonerResponseCallback.onResponse(null, e.getLocalizedMessage());
+                    Log.e(TAG, e.getLocalizedMessage());
                     e.printStackTrace();
                 }
             }

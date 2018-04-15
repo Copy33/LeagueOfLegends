@@ -26,14 +26,14 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white"
         android:orientation="vertical"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp">
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:labelFor="@+id/appwidget_text"
+            android:labelFor="@+id/widgetactiviy_summoner_name_text"
             android:text="Summoner Name"/>
 
         <LinearLayout
@@ -48,7 +48,7 @@
                 android:visibility="invisible"/>
 
             <EditText
-                android:id="@+id/appwidget_text"
+                android:id="@+id/widgetactiviy_summoner_name_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
@@ -73,15 +73,15 @@
         android:visibility="invisible"/>
 
     <Button
-        android:id="@+id/add_button"
+        android:id="@+id/widgetactivity_add_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="@color/colorPrimary"
+        android:padding="18dp"
         android:text="@string/add_widget"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
-        android:padding="18dp"
         android:textSize="18sp"/>
 
 </LinearLayout>

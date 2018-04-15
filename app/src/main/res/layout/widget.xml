@@ -19,7 +19,6 @@
             android:id="@+id/widget_updated_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/date_format"
             android:textSize="12sp"/>
     </LinearLayout>
 
@@ -54,8 +53,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:src="@drawable/challenger_i"/>
+        android:layout_centerVertical="true"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -81,21 +79,15 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/widget_rank_text"
+            <ImageView
+                android:id="@+id/widget_rank_name_image"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Platinum IV - 100 LP"
-                android:textColor="@color/white"
-                android:textSize="14sp"/>
+                android:layout_height="wrap_content"/>
 
-            <TextView
-                android:id="@+id/widget_summoner_text"
+            <ImageView
+                android:id="@+id/widget_summoner_name_image"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mojojo"
-                android:textColor="@color/white"
-                android:textSize="14sp"/>
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 
     </LinearLayout>
