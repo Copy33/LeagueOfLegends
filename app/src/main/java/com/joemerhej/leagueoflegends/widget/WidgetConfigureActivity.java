@@ -3,11 +3,15 @@ package com.joemerhej.leagueoflegends.widget;
 import android.app.Activity;
 import android.app.WallpaperManager;
 import android.appwidget.AppWidgetManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -97,8 +101,46 @@ public class WidgetConfigureActivity extends Activity
         mSummonerNameTextView = findViewById(R.id.widgetactivity_summoner_name_text);
 
         // fill in the views from shared preferences if they exist
+        if(mSummonerNameEditText.getText().toString().equals(""))
+            mAddWidgetButton.setEnabled(false);
+
         mSummonerNameEditText.setText(SharedPreferencesManager.readWidgetString(SharedPreferencesKey.SUMMONER_NAME, mWidgetId));
         mSummonerNameEditText.setSelection(mSummonerNameEditText.getText().length());
+
+        // listener to when keyboard action button (search) is clicked
+        mSummonerNameEditText.setOnEditorActionListener(new TextView.OnEditorActionListener()
+        {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event)
+            {
+                if(actionId == EditorInfo.IME_ACTION_SEARCH)
+                {
+                    Log.d("debug", "clicked search!");
+
+                    // hide virtual keyboard
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    if(imm != null && getCurrentFocus() != null)
+                    {
+                        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
+                    }
+
+                    // check summoner name and determine add widget button state
+                    String summonerName = mSummonerNameEditText.getText().toString();
+                    if(summonerName.isEmpty() || !summonerName.matches("^[0-9\\p{L} _\\.]+$"))
+                    {
+                        Log.e("debug", "Illegal Summoner Name: " + summonerName);
+
+                        mAddWidgetButton.setEnabled(false);
+                        return false;
+                    }
+
+                    mAddWidgetButton.setEnabled(true);
+                    return true;
+                }
+
+                return false;
+            }
+        });
 
         mUpdatedTextView.setText(getResources().getString(R.string.date_format, 1, DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date())));
 
@@ -112,8 +154,6 @@ public class WidgetConfigureActivity extends Activity
             public void onClick(View view)
             {
                 String summonerName = mSummonerNameEditText.getText().toString();
-                if(summonerName.isEmpty())  // TODO: do checks for summoner name (regex)
-                    summonerName = "Mojojo";
 
                 // write the summoner name to shared preferences
                 SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.SUMMONER_NAME, mWidgetId, summonerName);

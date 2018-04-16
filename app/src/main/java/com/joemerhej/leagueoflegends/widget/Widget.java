@@ -51,6 +51,9 @@ public class Widget extends AppWidgetProvider
 
         // get all other data from shared preferences
         final String summonerNameSP = SharedPreferencesManager.readWidgetString(SharedPreferencesKey.SUMMONER_NAME, appWidgetId);
+        if(summonerNameSP.isEmpty())
+            return;
+
         final String soloDuoRankSP = SharedPreferencesManager.readWidgetString(SharedPreferencesKey.SUMMONER_SOLO_DUO_RANK, appWidgetId); // TODO: take the highest rank instead of just solo queue
         final Long leaguePointsSP = SharedPreferencesManager.readWidgetLong(SharedPreferencesKey.SUMMONER_SOLO_DUO_LP, appWidgetId);    // TODO: maybe use these values to check new vs. old?
         final int rankImageIdSP = SharedPreferencesManager.readWidgetInt(SharedPreferencesKey.RANK_IMAGE_RES_ID, appWidgetId);
