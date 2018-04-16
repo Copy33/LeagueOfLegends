@@ -42,114 +42,40 @@ public class MainActivity extends AppCompatActivity
         mProfileName = findViewById(R.id.mainactivity_profile_name);
         mRankImage = findViewById(R.id.mainactivity_rank_image);
         mProfileIcon = findViewById(R.id.mainactivity_profile_icon);
-
-        //getSummonerProfileAndRankedData();
     }
 
 
-    void getSummonerProfileAndRankedData()
-    {
-        final SummonerRequest summonerRequest = new SummonerRequest(Region.EUNE);
-        summonerRequest.getSummoner("mojojo", Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<Summoner>()
-        {
-            @Override
-            public void onResponse(Summoner response, String error)
-            {
-                if(response != null && error == null)
-                {
-                    mProfile.set(response.getName(), response.getId(), response.getProfileIconId(), response.getSummonerLevel());
-
-                    summonerRequest.getLeagueRanks(mProfile.getId().toString(), Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<List<RankedData>>()
-                    {
-                        @Override
-                        public void onResponse(List<RankedData> response, String error)
-                        {
-                            if(response != null && error == null)
-                            {
-                                for(RankedData rankedData : response)
-                                {
-                                    switch(QueueType.from(rankedData.getQueueType()))
-                                    {
-                                        case FLEX_5V5:
-                                            mProfile.setFlex5(new QueueRank(QueueType.FLEX_5V5, rankedData.getTier(), rankedData.getRank(), rankedData.getLeaguePoints(), rankedData.getHotStreak()));
-                                            break;
-                                        case SOLO_DUO:
-                                            mProfile.setSoloDuo(new QueueRank(QueueType.SOLO_DUO, rankedData.getTier(), rankedData.getRank(), rankedData.getLeaguePoints(), rankedData.getHotStreak()));
-                                            break;
-                                        case FLEX_3V3:
-                                            mProfile.setFlex3(new QueueRank(QueueType.FLEX_3V3, rankedData.getTier(), rankedData.getRank(), rankedData.getLeaguePoints(), rankedData.getHotStreak()));
-                                            break;
-                                        default:
-                                            mProfile.setRanks(new QueueRank(QueueType.SOLO_DUO), new QueueRank(QueueType.FLEX_5V5), new QueueRank(QueueType.FLEX_3V3));
-                                            break;
-                                    }
-                                }
-
-                                // fill in the views
-                                mProfileName.setText(mProfile.getName());
-                                final int id = getResources().getIdentifier(mProfile.getSoloDuo().getRank().getName().toLowerCase(), "drawable", getPackageName());
-                                mRankImage.setImageResource(id);
-
-                                getPatchVersionsAndSummonerIcon();
-                            }
-                            else if(error != null)
-                            {
-                                mProfileName.setText("ERROR: " + error);
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Throwable t)
-                        {
-                            mProfileName.setText("ERROR: " + t.getLocalizedMessage());
-                        }
-                    });
-                }
-                else
-                {
-                    mProfileName.setText("ERROR: " + error);
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t)
-            {
-                mProfileName.setText("ERROR: " + t.getLocalizedMessage());
-            }
-        });
-    }
-
-    void getPatchVersionsAndSummonerIcon()
-    {
-        final GeneralRequest generalRequest = new GeneralRequest(Region.EUNE);
-        generalRequest.getPatchVersions(Utils.getApiKey(), new GeneralRequest.GeneralResponseCallback<List<String>>()
-        {
-            @Override
-            public void onResponse(List<String> response, String error)
-            {
-                if(response != null && error == null)
-                {
-                    String currentPatch = response.get(0);
-                    String iconUrl = "https://ddragon.leagueoflegends.com/cdn/" + currentPatch + "/img/profileicon/" + mProfile.getProfileIconId().toString() + ".png";
-
-                    Picasso.get()
-                           .load(iconUrl)
-                           .fit()
-                           .into(mProfileIcon);
-                }
-                else
-                {
-                    mProfileName.setText("ERROR: " + error);
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t)
-            {
-                mProfileName.setText("ERROR: " + t.getLocalizedMessage());
-            }
-        });
-    }
+//    void getPatchVersionsAndSummonerIcon()
+//    {
+//        final GeneralRequest generalRequest = new GeneralRequest(Region.EUNE);
+//        generalRequest.getPatchVersions(Utils.getApiKey(), new GeneralRequest.GeneralResponseCallback<List<String>>()
+//        {
+//            @Override
+//            public void onResponse(List<String> response, String error)
+//            {
+//                if(response != null && error == null)
+//                {
+//                    String currentPatch = response.get(0);
+//                    String iconUrl = "https://ddragon.leagueoflegends.com/cdn/" + currentPatch + "/img/profileicon/" + mProfile.getProfileIconId().toString() + ".png";
+//
+//                    Picasso.get()
+//                           .load(iconUrl)
+//                           .fit()
+//                           .into(mProfileIcon);
+//                }
+//                else
+//                {
+//                    mProfileName.setText("ERROR: " + error);
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Throwable t)
+//            {
+//                mProfileName.setText("ERROR: " + t.getLocalizedMessage());
+//            }
+//        });
+//    }
 }
 
 

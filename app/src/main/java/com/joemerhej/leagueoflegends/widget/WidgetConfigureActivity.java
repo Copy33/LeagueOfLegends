@@ -99,141 +99,21 @@ public class WidgetConfigureActivity extends Activity
                 if(summonerName.isEmpty())
                     summonerName = "Mojojo";
 
-                getSummonerProfileAndRankedData(summonerName);
+                // write the summoner name to shared preferences
+                SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.SUMMONER_NAME, mWidgetId, summonerName);
+
+                // it is the responsibility of the configuration activity to update the app widget
+                AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
+                Widget.updateWidget(getApplicationContext(), appWidgetManager, mWidgetId);
+
+                // make sure we pass back the original appWidgetId
+                Intent resultValue = new Intent();
+                resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mWidgetId);
+                setResult(RESULT_OK, resultValue);
+                finish();
             }
         });
     }
-
-    void getSummonerProfileAndRankedData(final String summonerName)
-    {
-        final SummonerRequest summonerRequest = new SummonerRequest(Region.EUNE);
-        summonerRequest.getSummoner(summonerName, Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<Summoner>()
-        {
-            @Override
-            public void onResponse(Summoner response, String error)
-            {
-                if(response != null && error == null)
-                {
-                    mProfile.set(response.getName(), response.getId(), response.getProfileIconId(), response.getSummonerLevel());
-
-                    summonerRequest.getLeagueRanks(mProfile.getId().toString(), Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<List<RankedData>>()
-                    {
-                        @Override
-                        public void onResponse(List<RankedData> response, String error)
-                        {
-                            if(response != null && error == null)
-                            {
-                                for(RankedData rankedData : response)
-                                {
-                                    switch(QueueType.from(rankedData.getQueueType()))
-                                    {
-                                        case FLEX_5V5:
-                                            mProfile.setFlex5(new QueueRank(QueueType.FLEX_5V5, rankedData.getTier(), rankedData.getRank(), rankedData.getLeaguePoints(), rankedData.getHotStreak()));
-                                            break;
-                                        case SOLO_DUO:
-                                            mProfile.setSoloDuo(new QueueRank(QueueType.SOLO_DUO, rankedData.getTier(), rankedData.getRank(), rankedData.getLeaguePoints(), rankedData.getHotStreak()));
-                                            break;
-                                        case FLEX_3V3:
-                                            mProfile.setFlex3(new QueueRank(QueueType.FLEX_3V3, rankedData.getTier(), rankedData.getRank(), rankedData.getLeaguePoints(), rankedData.getHotStreak()));
-                                            break;
-                                        default:
-                                            mProfile.setRanks(new QueueRank(QueueType.SOLO_DUO), new QueueRank(QueueType.FLEX_5V5), new QueueRank(QueueType.FLEX_3V3));
-                                            break;
-                                    }
-                                }
-
-                                // get the rank image id
-                                final int rankImageId = getResources().getIdentifier(mProfile.getSoloDuo().getRank().getName().replace(" ", "_").toLowerCase(), "drawable", getPackageName());
-
-                                // store the info locally
-                                SharedPreferencesManager.writeWidgetInt(SharedPreferencesKey.COUNT, mWidgetId, 0);
-                                SharedPreferencesManager.writeWidgetInt(SharedPreferencesKey.RANK_IMAGE_RES_ID, mWidgetId, rankImageId);
-
-                                SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.SUMMONER_NAME, mWidgetId, summonerName);
-                                SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_ID, mWidgetId, mProfile.getId());
-                                SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_ICON_ID, mWidgetId, mProfile.getProfileIconId());
-                                SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_LEVEL, mWidgetId, mProfile.getSummonerLevel());
-
-                                SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.SUMMONER_SOLO_DUO_RANK, mWidgetId, mProfile.getSoloDuo().getRank().getName());
-                                SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_SOLO_DUO_LP, mWidgetId, mProfile.getSoloDuo().getLeaguePoints());
-                                SharedPreferencesManager.writeWidgetBoolean(SharedPreferencesKey.SUMMONER_SOLO_DUO_HOTSTREAK, mWidgetId, mProfile.getSoloDuo().getHotStreak());
-
-                                SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.SUMMONER_FLEX_5_RANK, mWidgetId, mProfile.getFlex5().getRank().getName());
-                                SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_FLEX_5_LP, mWidgetId, mProfile.getFlex5().getLeaguePoints());
-                                SharedPreferencesManager.writeWidgetBoolean(SharedPreferencesKey.SUMMONER_FLEX_5_HOTSTREAK, mWidgetId, mProfile.getFlex5().getHotStreak());
-
-                                SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.SUMMONER_FLEX_3_RANK, mWidgetId, mProfile.getFlex3().getRank().getName());
-                                SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_FLEX_3_LP, mWidgetId, mProfile.getFlex3().getLeaguePoints());
-                                SharedPreferencesManager.writeWidgetBoolean(SharedPreferencesKey.SUMMONER_FLEX_3_HOTSTREAK, mWidgetId, mProfile.getFlex3().getHotStreak());
-
-                                // it is the responsibility of the configuration activity to update the app widget
-                                AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
-                                Widget.updateWidget(getApplicationContext(), appWidgetManager, mWidgetId);
-
-                                // make sure we pass back the original appWidgetId
-                                Intent resultValue = new Intent();
-                                resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mWidgetId);
-                                setResult(RESULT_OK, resultValue);
-                                finish();
-                            }
-                            else if(error != null)
-                            {
-                                Log.e("debug", "ERROR - 1: " + error);
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Throwable t)
-                        {
-                            Log.e("debug", "ERROR - 2: " + t.getLocalizedMessage());
-                        }
-                    });
-                }
-                else
-                {
-                    Log.e("debug", "ERROR - 3: " + error);
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t)
-            {
-                Log.e("debug", "ERROR - 4: " + t.getLocalizedMessage());
-            }
-        });
-    }
-
-//    void getPatchVersionsAndSummonerIcon()
-//    {
-//        final GeneralRequest generalRequest = new GeneralRequest(Region.EUNE);
-//        generalRequest.getPatchVersions(Utils.getApiKey(), new GeneralRequest.GeneralResponseCallback<List<String>>()
-//        {
-//            @Override
-//            public void onResponse(List<String> response, String error)
-//            {
-//                if(response != null && error == null)
-//                {
-//                    String currentPatch = response.get(0);
-//                    String iconUrl = "https://ddragon.leagueoflegends.com/cdn/" + currentPatch + "/img/profileicon/" + mProfile.getProfileIconId().toString() + ".png";
-//
-//                    Picasso.get()
-//                           .load(iconUrl)
-//                           .fit()
-//                           .into(mProfileIcon);
-//                }
-//                else
-//                {
-//                    mProfileName.setText("ERROR: " + error);
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Throwable t)
-//            {
-//                mProfileName.setText("ERROR: " + t.getLocalizedMessage());
-//            }
-//        });
-//    }
 }
 
 

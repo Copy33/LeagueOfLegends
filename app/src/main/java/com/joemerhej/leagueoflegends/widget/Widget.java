@@ -33,68 +33,156 @@ import java.util.List;
  */
 public class Widget extends AppWidgetProvider
 {
-    static void updateWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId)
+    static void updateWidget(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId)
     {
         Log.d("debug", "METHOD - ID " + appWidgetId + ": UpdateWidget");
 
-        // get the count data to update from shared preferences
-        int widgetCount = SharedPreferencesManager.readWidgetInt(SharedPreferencesKey.COUNT, appWidgetId);
-        ++widgetCount;
+        // create a profile for convenience
+        final Profile profile = new Profile();
+
+        // get the count data to update from shared preferences and increase it by 1
+        final int widgetCount = SharedPreferencesManager.readWidgetInt(SharedPreferencesKey.COUNT, appWidgetId) + 1;
+
+        // get the current time
+        final String dateString = DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date());
 
         // save data back the count to shared preferences
         SharedPreferencesManager.writeWidgetInt(SharedPreferencesKey.COUNT, appWidgetId, widgetCount);
 
         // get all other data from shared preferences
-        String summonerName = SharedPreferencesManager.readWidgetString(SharedPreferencesKey.SUMMONER_NAME, appWidgetId);
-        String soloDuoRank = SharedPreferencesManager.readWidgetString(SharedPreferencesKey.SUMMONER_SOLO_DUO_RANK, appWidgetId); // TODO: take the highest rank instead of just solo queue
-        Long leaguePoints = SharedPreferencesManager.readWidgetLong(SharedPreferencesKey.SUMMONER_SOLO_DUO_LP, appWidgetId);
-        int rankImageId = SharedPreferencesManager.readWidgetInt(SharedPreferencesKey.RANK_IMAGE_RES_ID, appWidgetId);
+        final String summonerNameSP = SharedPreferencesManager.readWidgetString(SharedPreferencesKey.SUMMONER_NAME, appWidgetId);
+        final String soloDuoRankSP = SharedPreferencesManager.readWidgetString(SharedPreferencesKey.SUMMONER_SOLO_DUO_RANK, appWidgetId); // TODO: take the highest rank instead of just solo queue
+        final Long leaguePointsSP = SharedPreferencesManager.readWidgetLong(SharedPreferencesKey.SUMMONER_SOLO_DUO_LP, appWidgetId);    // TODO: maybe use these values to check new vs. old?
+        final int rankImageIdSP = SharedPreferencesManager.readWidgetInt(SharedPreferencesKey.RANK_IMAGE_RES_ID, appWidgetId);
 
-        // get the current time.
-        String dateString = DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date());
+        // make the request to fetch new data
+        final SummonerRequest summonerRequest = new SummonerRequest(Region.EUNE);
+        summonerRequest.getSummoner(summonerNameSP, Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<Summoner>()
+        {
+            @Override
+            public void onResponse(Summoner response, String error)
+            {
+                if(response != null && error == null)
+                {
+                    // fill the new data in the profile
+                    profile.set(response.getName(), response.getId(), response.getProfileIconId(), response.getSummonerLevel());
 
-        // get the widget's views (from widget or widget activity) and update them
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
+                    summonerRequest.getLeagueRanks(profile.getId().toString(), Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<List<RankedData>>()
+                    {
+                        @Override
+                        public void onResponse(List<RankedData> response, String error)
+                        {
+                            if(response != null && error == null)
+                            {
+                                for(RankedData rankedData : response)
+                                {
+                                    switch(QueueType.from(rankedData.getQueueType()))
+                                    {
+                                        case FLEX_5V5:
+                                            profile.setFlex5(new QueueRank(QueueType.FLEX_5V5, rankedData.getTier(), rankedData.getRank(), rankedData.getLeaguePoints(), rankedData.getHotStreak()));
+                                            break;
+                                        case SOLO_DUO:
+                                            profile.setSoloDuo(new QueueRank(QueueType.SOLO_DUO, rankedData.getTier(), rankedData.getRank(), rankedData.getLeaguePoints(), rankedData.getHotStreak()));
+                                            break;
+                                        case FLEX_3V3:
+                                            profile.setFlex3(new QueueRank(QueueType.FLEX_3V3, rankedData.getTier(), rankedData.getRank(), rankedData.getLeaguePoints(), rankedData.getHotStreak()));
+                                            break;
+                                        default:
+                                            profile.setRanks(new QueueRank(QueueType.SOLO_DUO), new QueueRank(QueueType.FLEX_5V5), new QueueRank(QueueType.FLEX_3V3));
+                                            break;
+                                    }
+                                }
 
-        views.setTextViewText(R.id.widgetactiviy_summoner_name_text, summonerName);
-        views.setTextViewText(R.id.widget_updated_text, context.getResources().getString(R.string.date_format, widgetCount, dateString));
+                                // get the new rank image resource id
+                                final int rankImageIdNEW = context.getResources().getIdentifier(profile.getSoloDuo().getRank().getName().replace(" ", "_").toLowerCase(), "drawable", context.getPackageName());
 
-        String summonerRank = soloDuoRank + " - " + leaguePoints + " LP";
-        Bitmap myBitmap = Utils.getFontBitmap(context, summonerRank, Color.WHITE, 14);
-        views.setImageViewBitmap(R.id.widget_rank_name_image, myBitmap);
+                                // store the newly fetched info in SharedPreferences
+                                SharedPreferencesManager.writeWidgetInt(SharedPreferencesKey.RANK_IMAGE_RES_ID, appWidgetId, rankImageIdNEW);
 
-        myBitmap = Utils.getFontBitmap(context, summonerName, Color.WHITE, 24);
-        views.setImageViewBitmap(R.id.widget_summoner_name_image, myBitmap);
+                                SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.SUMMONER_NAME, appWidgetId, profile.getSummonerName());
+                                SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_ID, appWidgetId, profile.getId());
+                                SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_ICON_ID, appWidgetId, profile.getProfileIconId());
+                                SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_LEVEL, appWidgetId, profile.getSummonerLevel());
 
-        views.setImageViewResource(R.id.widget_rank_image, rankImageId);
+                                SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.SUMMONER_SOLO_DUO_RANK, appWidgetId, profile.getSoloDuo().getRank().getName());
+                                SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_SOLO_DUO_LP, appWidgetId, profile.getSoloDuo().getLeaguePoints());
+                                SharedPreferencesManager.writeWidgetBoolean(SharedPreferencesKey.SUMMONER_SOLO_DUO_HOTSTREAK, appWidgetId, profile.getSoloDuo().getHotStreak());
 
-        // ===========================================================================================================================================================================
-        // Buttons click listeners
-        // ===========================================================================================================================================================================
-        // setup refresh button to send a refresh action to the Widget class as a pending intent, include widget ID as extra,
-        // wrap it in a pending intent to send a broadcast (pass widget id as request code to make each intent unique, and assign pending intent to click handler of button.
-        Intent intentRefresh = new Intent(context, Widget.class);
-        intentRefresh.setAction(WidgetAction.REFRESH.getValue());
-        intentRefresh.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+                                SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.SUMMONER_FLEX_5_RANK, appWidgetId, profile.getFlex5().getRank().getName());
+                                SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_FLEX_5_LP, appWidgetId, profile.getFlex5().getLeaguePoints());
+                                SharedPreferencesManager.writeWidgetBoolean(SharedPreferencesKey.SUMMONER_FLEX_5_HOTSTREAK, appWidgetId, profile.getFlex5().getHotStreak());
 
-        PendingIntent pendingIntentRefresh = PendingIntent.getBroadcast(context, appWidgetId, intentRefresh, PendingIntent.FLAG_UPDATE_CURRENT);
+                                SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.SUMMONER_FLEX_3_RANK, appWidgetId, profile.getFlex3().getRank().getName());
+                                SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_FLEX_3_LP, appWidgetId, profile.getFlex3().getLeaguePoints());
+                                SharedPreferencesManager.writeWidgetBoolean(SharedPreferencesKey.SUMMONER_FLEX_3_HOTSTREAK, appWidgetId, profile.getFlex3().getHotStreak());
 
-        views.setOnClickPendingIntent(R.id.button_refresh, pendingIntentRefresh);
+                                // get the widget's views and update them with the new data
+                                RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
+
+                                views.setTextViewText(R.id.widget_updated_text, context.getResources().getString(R.string.date_format, widgetCount, dateString));
+
+                                String summonerRank = profile.getSoloDuo().getRank().getName() + " - " + profile.getSoloDuo().getLeaguePoints() + " LP";
+                                Bitmap summonerRankBitmap = Utils.getFontBitmap(context, summonerRank, Color.WHITE, 14);
+                                views.setImageViewBitmap(R.id.widget_rank_name_image, summonerRankBitmap);
+
+                                Bitmap summonerNameBitmap = Utils.getFontBitmap(context, profile.getSummonerName(), Color.WHITE, 24);
+                                views.setImageViewBitmap(R.id.widget_summoner_name_image, summonerNameBitmap);
+
+                                views.setImageViewResource(R.id.widget_rank_image, rankImageIdNEW);
+
+                                // ===========================================================================================================================================================================
+                                // Buttons click listeners
+                                // ===========================================================================================================================================================================
+                                // setup refresh button to send a refresh action to the Widget class as a pending intent, include widget ID as extra,
+                                // wrap it in a pending intent to send a broadcast (pass widget id as request code to make each intent unique, and assign pending intent to click handler of button.
+                                Intent intentRefresh = new Intent(context, Widget.class);
+                                intentRefresh.setAction(WidgetAction.REFRESH.getValue());
+                                intentRefresh.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+
+                                PendingIntent pendingIntentRefresh = PendingIntent.getBroadcast(context, appWidgetId, intentRefresh, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                                views.setOnClickPendingIntent(R.id.button_refresh, pendingIntentRefresh);
 
 
-        // setup edit button to send an edit action to the Widget Configure Activity as a pending intent, include widget ID as extra,
-        // wrap it in a pending intent to send a broadcast (pass widget id as request code to make each intent unique, and assign pending intent to click handler of button.
-        Intent intentEdit = new Intent(context, WidgetConfigureActivity.class);
-        intentEdit.setAction(WidgetAction.EDIT.getValue());
-        intentEdit.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+                                // setup edit button to send an edit action to the Widget Configure Activity as a pending intent, include widget ID as extra,
+                                // wrap it in a pending intent to send a broadcast (pass widget id as request code to make each intent unique, and assign pending intent to click handler of button.
+                                Intent intentEdit = new Intent(context, WidgetConfigureActivity.class);
+                                intentEdit.setAction(WidgetAction.EDIT.getValue());
+                                intentEdit.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
 
-        PendingIntent pendingIntentEdit = PendingIntent.getActivity(context, appWidgetId, intentEdit, PendingIntent.FLAG_UPDATE_CURRENT);
+                                PendingIntent pendingIntentEdit = PendingIntent.getActivity(context, appWidgetId, intentEdit, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        views.setOnClickPendingIntent(R.id.button_edit, pendingIntentEdit);
-        // ===========================================================================================================================================================================
+                                views.setOnClickPendingIntent(R.id.button_edit, pendingIntentEdit);
+                                // ===========================================================================================================================================================================
 
-        // Instruct the widget manager to update the widget
-        appWidgetManager.updateAppWidget(appWidgetId, views);
+                                // update the app widget
+                                appWidgetManager.updateAppWidget(appWidgetId, views);
+                            }
+                            else if(error != null)
+                            {
+                                Log.e("debug", "ERROR - 1: " + error);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Throwable t)
+                        {
+                            Log.e("debug", "ERROR - 2: " + t.getLocalizedMessage());
+                        }
+                    });
+                }
+                else
+                {
+                    Log.e("debug", "ERROR - 3: " + error);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t)
+            {
+                Log.e("debug", "ERROR - 4: " + t.getLocalizedMessage());
+            }
+        });
     }
 
     @Override
@@ -104,6 +192,7 @@ public class Widget extends AppWidgetProvider
         for(int appWidgetId : appWidgetIds)
         {
             Log.d("debug", "METHOD - ID " + appWidgetId + ": OnUpdate");
+
             updateWidget(context, appWidgetManager, appWidgetId);
         }
     }
@@ -126,8 +215,6 @@ public class Widget extends AppWidgetProvider
             widgetId = 0;
         }
 
-        final Profile profile = new Profile();
-
         Log.d("debug", "METHOD - ID " + widgetId + ": OnReceive");
 
         // check which action is returned (ie. which button was pressed)
@@ -135,97 +222,9 @@ public class Widget extends AppWidgetProvider
         {
             Log.d("debug", "ACTION - ID " + widgetId + ": Refresh ");
 
-            // get the summoner name from shared preferences
-            final String summonerName = SharedPreferencesManager.readWidgetString(SharedPreferencesKey.SUMMONER_NAME, widgetId);
-
-            final SummonerRequest summonerRequest = new SummonerRequest(Region.EUNE);
-            summonerRequest.getSummoner(summonerName, Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<Summoner>()
-            {
-                @Override
-                public void onResponse(Summoner response, String error)
-                {
-                    if(response != null && error == null)
-                    {
-                        profile.set(response.getName(), response.getId(), response.getProfileIconId(), response.getSummonerLevel());
-
-                        summonerRequest.getLeagueRanks(profile.getId().toString(), Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<List<RankedData>>()
-                        {
-                            @Override
-                            public void onResponse(List<RankedData> response, String error)
-                            {
-                                if(response != null && error == null)
-                                {
-                                    for(RankedData rankedData : response)
-                                    {
-                                        switch(QueueType.from(rankedData.getQueueType()))
-                                        {
-                                            case FLEX_5V5:
-                                                profile.setFlex5(new QueueRank(QueueType.FLEX_5V5, rankedData.getTier(), rankedData.getRank(), rankedData.getLeaguePoints(), rankedData.getHotStreak()));
-                                                break;
-                                            case SOLO_DUO:
-                                                profile.setSoloDuo(new QueueRank(QueueType.SOLO_DUO, rankedData.getTier(), rankedData.getRank(), rankedData.getLeaguePoints(), rankedData.getHotStreak()));
-                                                break;
-                                            case FLEX_3V3:
-                                                profile.setFlex3(new QueueRank(QueueType.FLEX_3V3, rankedData.getTier(), rankedData.getRank(), rankedData.getLeaguePoints(), rankedData.getHotStreak()));
-                                                break;
-                                            default:
-                                                profile.setRanks(new QueueRank(QueueType.SOLO_DUO), new QueueRank(QueueType.FLEX_5V5), new QueueRank(QueueType.FLEX_3V3));
-                                                break;
-                                        }
-                                    }
-
-                                    // get the rank image id
-                                    final int rankImageId = context.getResources().getIdentifier(profile.getSoloDuo().getRank().getName().replace(" ", "_").toLowerCase(), "drawable", context.getPackageName());
-
-                                    // store the info locally
-                                    SharedPreferencesManager.writeWidgetInt(SharedPreferencesKey.RANK_IMAGE_RES_ID, widgetId, rankImageId);
-
-                                    SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.SUMMONER_NAME, widgetId, summonerName);
-                                    SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_ID, widgetId, profile.getId());
-                                    SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_ICON_ID, widgetId, profile.getProfileIconId());
-                                    SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_LEVEL, widgetId, profile.getSummonerLevel());
-
-                                    SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.SUMMONER_SOLO_DUO_RANK, widgetId, profile.getSoloDuo().getRank().getName());
-                                    SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_SOLO_DUO_LP, widgetId, profile.getSoloDuo().getLeaguePoints());
-                                    SharedPreferencesManager.writeWidgetBoolean(SharedPreferencesKey.SUMMONER_SOLO_DUO_HOTSTREAK, widgetId, profile.getSoloDuo().getHotStreak());
-
-                                    SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.SUMMONER_FLEX_5_RANK, widgetId, profile.getFlex5().getRank().getName());
-                                    SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_FLEX_5_LP, widgetId, profile.getFlex5().getLeaguePoints());
-                                    SharedPreferencesManager.writeWidgetBoolean(SharedPreferencesKey.SUMMONER_FLEX_5_HOTSTREAK, widgetId, profile.getFlex5().getHotStreak());
-
-                                    SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.SUMMONER_FLEX_3_RANK, widgetId, profile.getFlex3().getRank().getName());
-                                    SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_FLEX_3_LP, widgetId, profile.getFlex3().getLeaguePoints());
-                                    SharedPreferencesManager.writeWidgetBoolean(SharedPreferencesKey.SUMMONER_FLEX_3_HOTSTREAK, widgetId, profile.getFlex3().getHotStreak());
-
-                                    // it is the responsibility of the configuration activity to update the app widget
-                                    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-                                    Widget.updateWidget(context, appWidgetManager, widgetId);
-                                }
-                                else if(error != null)
-                                {
-                                    Log.e("debug", "ERROR - 1: " + error);
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Throwable t)
-                            {
-                                Log.e("debug", "ERROR - 2: " + t.getLocalizedMessage());
-                            }
-                        });
-                    }
-                    else
-                    {
-                        Log.e("debug", "ERROR - 3: " + error);
-                    }
-                }
-
-                @Override
-                public void onFailure(Throwable t)
-                {
-                    Log.e("debug", "ERROR - 4: " + t.getLocalizedMessage());
-                }
-            });
+            // call update widget
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            Widget.updateWidget(context, appWidgetManager, widgetId);
         }
 
         super.onReceive(context, intent);

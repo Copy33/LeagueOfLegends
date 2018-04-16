@@ -8,7 +8,7 @@ import com.joemerhej.leagueoflegends.enums.QueueType;
 
 public class Profile
 {
-    private String name;
+    private String summonerName;
     private Long id;
     private Long profileIconId;
     private Long summonerLevel;
@@ -19,16 +19,16 @@ public class Profile
 
     public Profile()
     {
-        name = "";
+        summonerName = "";
         id = 0L;
         profileIconId = 0L;
         summonerLevel = 0L;
         setRanks(new QueueRank(QueueType.SOLO_DUO), new QueueRank(QueueType.FLEX_5V5), new QueueRank(QueueType.FLEX_3V3));
     }
 
-    public Profile(String name, Long id, Long profileIconId, Long summonerLevel, QueueRank soloDuo, QueueRank flex5, QueueRank flex3)
+    public Profile(String summonerName, Long id, Long profileIconId, Long summonerLevel, QueueRank soloDuo, QueueRank flex5, QueueRank flex3)
     {
-        this.name = name;
+        this.summonerName = summonerName;
         this.id = id;
         this.profileIconId = profileIconId;
         this.summonerLevel = summonerLevel;
@@ -41,7 +41,7 @@ public class Profile
     public String toString()
     {
         return "Profile{" +
-                "name='" + name + '\'' +
+                "summonerName='" + summonerName + '\'' +
                 ", id=" + id +
                 ", profileIconId=" + profileIconId +
                 ", summonerLevel=" + summonerLevel +
@@ -53,7 +53,7 @@ public class Profile
 
     public void set(String name, Long id, Long profileIconId, Long summonerLevel, QueueRank soloDuo, QueueRank flex5, QueueRank flex3)
     {
-        this.name = name;
+        this.summonerName = name;
         this.id = id;
         this.profileIconId = profileIconId;
         this.summonerLevel = summonerLevel;
@@ -64,7 +64,7 @@ public class Profile
 
     public void set(String name, Long id, Long profileIconId, Long summonerLevel)
     {
-        this.name = name;
+        this.summonerName = name;
         this.id = id;
         this.profileIconId = profileIconId;
         this.summonerLevel = summonerLevel;
@@ -77,14 +77,14 @@ public class Profile
         Flex3 = flex3;
     }
 
-    public String getName()
+    public String getSummonerName()
     {
-        return name;
+        return summonerName;
     }
 
-    public void setName(String name)
+    public void setSummonerName(String summonerName)
     {
-        this.name = name;
+        this.summonerName = summonerName;
     }
 
     public Long getId()
