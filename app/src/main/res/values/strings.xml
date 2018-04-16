@@ -15,4 +15,9 @@
     <!-- Format string for the date & count text view -->
     <string name="date_format">%1$d@%2$s</string>
 
+    <!-- Accessibility strings -->
+    <string name="acc_rank_name">rank</string>
+    <string name="acc_summoner_name">summoner</string>
+    <string name="acc_rank_image_name">rank image</string>
+
 </resources>

@@ -10,7 +10,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.joemerhej.leagueoflegends.R;
 import com.joemerhej.leagueoflegends.enums.QueueType;
@@ -24,6 +26,8 @@ import com.joemerhej.leagueoflegends.sharedpreferences.SharedPreferencesKey;
 import com.joemerhej.leagueoflegends.sharedpreferences.SharedPreferencesManager;
 import com.joemerhej.leagueoflegends.utils.Utils;
 
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,19 +36,21 @@ import java.util.List;
 public class WidgetConfigureActivity extends Activity
 {
     // properties
-    private Profile mProfile;
     private int mWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
     // views
     private LinearLayout mBackgroundLinearLayout;
     private EditText mSummonerNameEditText;
+    private TextView mUpdatedTextView;
+    private ImageView mRankImageImageView;
+    private TextView mRankNameTextView;
+    private TextView mSummonerNameTextView;
     private Button mAddWidgetButton;
 
 
     public WidgetConfigureActivity()
     {
         super();
-        mProfile = new Profile();
     }
 
     @Override
@@ -85,18 +91,28 @@ public class WidgetConfigureActivity extends Activity
         // initialize the views
         mSummonerNameEditText = findViewById(R.id.widgetactiviy_summoner_name_text);
         mAddWidgetButton = findViewById(R.id.widgetactivity_add_button);
+        mUpdatedTextView = findViewById(R.id.widgetactivity_updated_text);
+        mRankImageImageView = findViewById(R.id.widgetactivity_rank_image);
+        mRankNameTextView = findViewById(R.id.widgetactivity_rank_name_text);
+        mSummonerNameTextView = findViewById(R.id.widgetactivity_summoner_name_text);
 
-        // fill in the views
+        // fill in the views from shared preferences if they exist
         mSummonerNameEditText.setText(SharedPreferencesManager.readWidgetString(SharedPreferencesKey.SUMMONER_NAME, mWidgetId));
         mSummonerNameEditText.setSelection(mSummonerNameEditText.getText().length());
 
+        mUpdatedTextView.setText(getResources().getString(R.string.date_format, 1, DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date())));
+
+//        int rankImageIdNEW = getResources().getIdentifier(profile.getSoloDuo().getRank().getName().replace(" ", "_").toLowerCase(), "drawable", context.getPackageName());
+//        mRankImageImageView.setImageResource();
+
+        // add the click listener to the add widget button that will update the widget and add it (return its id)
         mAddWidgetButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View view)
             {
                 String summonerName = mSummonerNameEditText.getText().toString();
-                if(summonerName.isEmpty())
+                if(summonerName.isEmpty())  // TODO: do checks for summoner name (regex)
                     summonerName = "Mojojo";
 
                 // write the summoner name to shared preferences
