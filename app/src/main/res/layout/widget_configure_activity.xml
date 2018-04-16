@@ -53,6 +53,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
                 android:gravity="center"
+                android:fontFamily="@font/myfontfamily"
+                android:textStyle="bold"
                 android:imeOptions="actionSearch"
                 android:inputType="text"/>
 
@@ -144,23 +146,17 @@
                 android:gravity="center"
                 android:orientation="vertical">
 
-                <TextView
+                <ImageView
                     android:id="@+id/widgetactivity_rank_name_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/acc_rank_name"
-                    android:fontFamily="@font/myfontbold"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"/>
+                    android:contentDescription="@string/acc_rank_name"/>
 
-                <TextView
+                <ImageView
                     android:id="@+id/widgetactivity_summoner_name_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/acc_summoner_name"
-                    android:fontFamily="@font/myfontbold"
-                    android:textColor="@color/white"
-                    android:textSize="24sp"/>
+                    android:contentDescription="@string/acc_summoner_name"/>
             </LinearLayout>
 
         </LinearLayout>
@@ -183,6 +179,7 @@
         android:text="@string/add_widget"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
+        android:fontFamily="cursive"
         android:textSize="18sp"/>
 
 </LinearLayout>

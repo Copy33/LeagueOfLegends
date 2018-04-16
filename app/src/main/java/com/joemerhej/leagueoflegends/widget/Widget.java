@@ -124,7 +124,7 @@ public class Widget extends AppWidgetProvider
 
                                 views.setTextViewText(R.id.widget_updated_text, context.getResources().getString(R.string.date_format, widgetCount, dateString));
 
-                                String summonerRank = profile.getSoloDuo().getRank().getName() + " - " + profile.getSoloDuo().getLeaguePoints() + " LP";
+                                String summonerRank = profile.getSoloDuo().getRank().getName() + " - " + profile.getSoloDuo().getLeaguePoints() + " LP"; // TODO: take the highest rank instead of just solo queue
                                 Bitmap summonerRankBitmap = Utils.getFontBitmap(context, summonerRank, Color.WHITE, 14);
                                 views.setImageViewBitmap(R.id.widget_rank_name_image, summonerRankBitmap);
 
