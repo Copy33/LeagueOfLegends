@@ -21,7 +21,6 @@ import com.joemerhej.leagueoflegends.pojos.Summoner;
 import com.joemerhej.leagueoflegends.serverrequests.SummonerRequest;
 import com.joemerhej.leagueoflegends.sharedpreferences.SharedPreferencesKey;
 import com.joemerhej.leagueoflegends.sharedpreferences.SharedPreferencesManager;
-import com.joemerhej.leagueoflegends.utils.Regions;
 import com.joemerhej.leagueoflegends.utils.Utils;
 
 import java.text.DateFormat;
@@ -79,6 +78,12 @@ public class Widget extends AppWidgetProvider
                         {
                             if(response != null && error == null)
                             {
+                                // empty response here means the account is unranked
+                                if(response.isEmpty())
+                                {
+                                    profile.setRanks(new QueueRank(QueueType.SOLO_DUO), new QueueRank(QueueType.FLEX_5V5), new QueueRank(QueueType.FLEX_3V3));
+                                }
+
                                 for(RankedData rankedData : response)
                                 {
                                     switch(QueueType.from(rankedData.getQueueType()))

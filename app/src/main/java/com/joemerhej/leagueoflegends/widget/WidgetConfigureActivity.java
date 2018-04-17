@@ -154,7 +154,6 @@ public class WidgetConfigureActivity extends Activity
                 mRegionSpinner.setSelection(position);
 
                 // clear preview if selected position is different from shared preferences stored region
-
                 String regionCodeSP = SharedPreferencesManager.readWidgetString(SharedPreferencesKey.REGION_CODE, mWidgetId);
                 Region regionSP = Utils.getRegionFromCode(RegionCode.from(regionCodeSP));
                 int positionSP = mRegionSpinnerAdapter.getRegions().indexOf(regionSP);
@@ -316,6 +315,12 @@ public class WidgetConfigureActivity extends Activity
                         {
                             if(response != null && error == null)
                             {
+                                // empty response here means the account is unranked
+                                if(response.isEmpty())
+                                {
+                                    mProfile.setRanks(new QueueRank(QueueType.SOLO_DUO), new QueueRank(QueueType.FLEX_5V5), new QueueRank(QueueType.FLEX_3V3));
+                                }
+
                                 for(RankedData rankedData : response)
                                 {
                                     switch(QueueType.from(rankedData.getQueueType()))
