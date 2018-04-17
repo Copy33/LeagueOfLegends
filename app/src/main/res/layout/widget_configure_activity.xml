@@ -3,7 +3,7 @@
               android:id="@+id/activity_layout"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@android:color/darker_gray"
+              android:background="@color/gray"
               android:orientation="vertical">
 
     <LinearLayout
@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="Widget Setting"
+            android:text="@string/widgetactivity_title"
             android:textColor="@android:color/white"
             android:textSize="16sp"/>
     </LinearLayout>
@@ -26,19 +26,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
-        android:orientation="vertical"
-        android:paddingBottom="16dp"
-        android:paddingTop="16dp">
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:padding="16dp">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="1"
                 android:orientation="vertical">
 
                 <TextView
@@ -46,7 +46,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:labelFor="@+id/widgetactiviy_summoner_name_text"
-                    android:text="Summoner Name"/>
+                    android:text="@string/widgetactivity_summoner_name_label"/>
 
                 <EditText
                     android:id="@+id/widgetactiviy_summoner_name_text"
@@ -55,24 +55,49 @@
                     android:fontFamily="@font/myfontfamily"
                     android:gravity="center"
                     android:imeOptions="actionSearch"
-                    android:inputType="text"
+                    android:inputType="text|textNoSuggestions"
                     android:textStyle="bold"/>
 
             </LinearLayout>
 
             <Spinner
                 android:id="@+id/widgetactivity_region_spinner"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:prompt="@string/region_spinner_title"
                 android:spinnerMode="dialog"/>
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray">
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/widgetactivity_refresh_interval_label"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="every 30 min"
+                android:gravity="end"/>
+        </LinearLayout>
+
     </LinearLayout>
 
-    <!-- Preview section -->
+    <!-- ================================ Preview section ================================ -->
     <View
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -106,7 +131,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?android:selectableItemBackground"
-                android:contentDescription="@string/widget_button_edit"
+                android:contentDescription="@string/acc_region_flag"
                 android:padding="6dp"
                 android:src="@drawable/button_edit"/>
 
@@ -114,7 +139,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?android:selectableItemBackground"
-                android:contentDescription="@string/widget_button_refresh"
+                android:contentDescription="@string/acc_refresh_button"
                 android:padding="6dp"
                 android:src="@drawable/button_refresh"/>
 
@@ -181,9 +206,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="@drawable/add_widget_button"
-        android:fontFamily="cursive"
         android:padding="18dp"
-        android:text="@string/add_widget"
+        android:text="@string/widgetactivity_add_widget_button_label"
         android:textAllCaps="false"
         android:textColor="@android:color/white"
         android:textSize="18sp"/>

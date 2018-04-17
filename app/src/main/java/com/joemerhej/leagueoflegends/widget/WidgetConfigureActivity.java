@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -48,6 +49,7 @@ import java.util.List;
 public class WidgetConfigureActivity extends Activity
 {
     // properties
+    private static final int READ_EXTERNAL_STORAGE_PERMISSION_CODE = 0;
     private int mWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     private final Profile mProfile = new Profile();
     private boolean mIsNewProfile;
@@ -80,12 +82,6 @@ public class WidgetConfigureActivity extends Activity
         setResult(RESULT_CANCELED);
         setContentView(R.layout.widget_configure_activity);
 
-        // initialize activity background to be the device home wallpaper
-        WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
-        Drawable wallpaperDrawable = wallpaperManager.getDrawable();
-        mBackgroundLinearLayout = findViewById(R.id.activity_layout);
-        mBackgroundLinearLayout.setBackground(wallpaperDrawable);
-
         // initialize shared preferences manager
         SharedPreferencesManager.init(this);
 
@@ -108,6 +104,7 @@ public class WidgetConfigureActivity extends Activity
         mIsNewProfile = false;
 
         // initialize the views
+        mBackgroundLinearLayout = findViewById(R.id.activity_layout);
         mSummonerNameEditText = findViewById(R.id.widgetactiviy_summoner_name_text);
         mRegionSpinner = findViewById(R.id.widgetactivity_region_spinner);
         mAddWidgetButton = findViewById(R.id.widgetactivity_add_button);
@@ -115,6 +112,19 @@ public class WidgetConfigureActivity extends Activity
         mPreviewRankImageImageView = findViewById(R.id.widgetactivity_rank_image);
         mPreviewRankNameImageView = findViewById(R.id.widgetactivity_rank_name_text);
         mPreviewSummonerNameImageView = findViewById(R.id.widgetactivity_summoner_name_text);
+
+        // set up activity wallpaper
+        if(Build.VERSION.SDK_INT < 26)
+        {
+            // initialize activity background to be the device home wallpaper
+            WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
+            Drawable wallpaperDrawable = wallpaperManager.getDrawable();
+            mBackgroundLinearLayout.setBackground(wallpaperDrawable);
+        }
+        else
+        {
+            mBackgroundLinearLayout.setBackground(getDrawable(R.drawable.wallpaper));
+        }
 
         // set up region spinner
         List<Region> regions = new ArrayList<>();
@@ -269,7 +279,7 @@ public class WidgetConfigureActivity extends Activity
                     SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_FLEX_3_LP, mWidgetId, mProfile.getFlex3().getLeaguePoints());
                     SharedPreferencesManager.writeWidgetBoolean(SharedPreferencesKey.SUMMONER_FLEX_3_HOTSTREAK, mWidgetId, mProfile.getFlex3().getHotStreak());
                 }
-                
+
                 // it is the responsibility of the configuration activity to update the app widget
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
                 Widget.updateWidget(getApplicationContext(), appWidgetManager, mWidgetId);

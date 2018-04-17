@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="horizontal"
-              android:padding="20dp">
+              android:layout_height="wrap_content"
+              android:gravity="center"
+              android:paddingBottom="12dp"
+              android:paddingTop="12dp">
 
     <ImageView
         android:id="@+id/spinner_region_image"
-        android:layout_width="30dp"
+        android:layout_width="0dp"
         android:layout_height="30dp"
-        android:src="@drawable/flag_na"/>
+        android:layout_weight="1"
+        android:src="@drawable/flag_na"
+        android:contentDescription="@string/acc_region_flag"/>
 
     <TextView
         android:id="@+id/spinner_region_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="3"
-        android:padding="10dp"
-        android:text="North America"/>
+        android:layout_weight="2"
+        android:text="North America"
+        android:textSize="18sp"/>
 
 </LinearLayout>

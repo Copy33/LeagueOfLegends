@@ -2,15 +2,10 @@
     <string name="app_name">ALeagueRank</string>
 
     <!-- Widget configure activity values -->
-    <string name="summoner_name">Summoner Name</string>
-    <string name="add_widget">Add widget</string>
-
-    <!-- Heading for the app widget ID panel. -->
-    <string name="widget_id_label">Widget ID</string>
-
-    <!-- Button labels. -->
-    <string name="widget_button_refresh">Refresh</string>
-    <string name="widget_button_edit">Edit</string>
+    <string name="widgetactivity_title">Badge Setting</string>
+    <string name="widgetactivity_summoner_name_label">Summoner Name</string>
+    <string name="widgetactivity_add_widget_button_label">Add widget</string>
+    <string name="widgetactivity_refresh_interval_label">Refresh Interval</string>
 
     <!-- Format string for the date & count text view -->
     <string name="date_format">%1$d@%2$s</string>
@@ -19,9 +14,16 @@
     <string name="acc_rank_name">rank</string>
     <string name="acc_summoner_name">summoner</string>
     <string name="acc_rank_image_name">rank image</string>
+    <string name="acc_refresh_button">refresh</string>
+    <string name="acc_edit_button">edit</string>
+    <string name="acc_region_flag">region flag</string>
 
     <!-- RegionCode Spinner strings -->
     <string name="region_spinner_title">Region</string>
     <string name="region_spinner_name">Region</string>
+
+    <!-- External storage read permission dialog -->
+    <string name="read_external_storage_permission_dialog_title">Wallpaper Access Permission</string>
+    <string name="read_external_storage_permission_dialog_message">I will tell you why I need the wallpaper here</string>
 
 </resources>
