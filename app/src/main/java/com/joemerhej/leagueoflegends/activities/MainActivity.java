@@ -6,18 +6,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.joemerhej.leagueoflegends.R;
-import com.joemerhej.leagueoflegends.enums.QueueType;
-import com.joemerhej.leagueoflegends.enums.Region;
 import com.joemerhej.leagueoflegends.models.Profile;
-import com.joemerhej.leagueoflegends.models.QueueRank;
-import com.joemerhej.leagueoflegends.pojos.RankedData;
-import com.joemerhej.leagueoflegends.pojos.Summoner;
-import com.joemerhej.leagueoflegends.serverrequests.GeneralRequest;
-import com.joemerhej.leagueoflegends.serverrequests.SummonerRequest;
-import com.joemerhej.leagueoflegends.utils.Utils;
-import com.squareup.picasso.Picasso;
-
-import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity
@@ -47,7 +36,7 @@ public class MainActivity extends AppCompatActivity
 
 //    void getPatchVersionsAndSummonerIcon()
 //    {
-//        final GeneralRequest generalRequest = new GeneralRequest(Region.EUNE);
+//        final GeneralRequest generalRequest = new GeneralRequest(RegionCode.EUNE);
 //        generalRequest.getPatchVersions(Utils.getApiKey(), new GeneralRequest.GeneralResponseCallback<List<String>>()
 //        {
 //            @Override

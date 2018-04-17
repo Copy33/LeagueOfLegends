@@ -13,7 +13,7 @@ import android.widget.RemoteViews;
 
 import com.joemerhej.leagueoflegends.R;
 import com.joemerhej.leagueoflegends.enums.QueueType;
-import com.joemerhej.leagueoflegends.enums.Region;
+import com.joemerhej.leagueoflegends.enums.RegionCode;
 import com.joemerhej.leagueoflegends.models.Profile;
 import com.joemerhej.leagueoflegends.models.QueueRank;
 import com.joemerhej.leagueoflegends.pojos.RankedData;
@@ -59,7 +59,7 @@ public class Widget extends AppWidgetProvider
         final int rankImageIdSP = SharedPreferencesManager.readWidgetInt(SharedPreferencesKey.RANK_IMAGE_RES_ID, appWidgetId);
 
         // make the request to fetch new data
-        final SummonerRequest summonerRequest = new SummonerRequest(Region.EUNE);
+        final SummonerRequest summonerRequest = new SummonerRequest(RegionCode.EUNE);
         summonerRequest.getSummoner(summonerNameSP, Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<Summoner>()
         {
             @Override

@@ -3,7 +3,7 @@ package com.joemerhej.leagueoflegends.serverrequests;
 import android.util.Log;
 
 import com.joemerhej.leagueoflegends.apis.SummonerApi;
-import com.joemerhej.leagueoflegends.enums.Region;
+import com.joemerhej.leagueoflegends.enums.RegionCode;
 import com.joemerhej.leagueoflegends.pojos.RankedData;
 import com.joemerhej.leagueoflegends.pojos.Summoner;
 
@@ -35,9 +35,9 @@ public class SummonerRequest
 
 
 
-    public SummonerRequest(Region region)
+    public SummonerRequest(RegionCode regionCode)
     {
-        mBaseUrl = "https://" + region.getCode() + ".api.riotgames.com/";
+        mBaseUrl = "https://" + regionCode.getCode() + ".api.riotgames.com/";
         mRetrofit = RetrofitClient.getClient(mBaseUrl);
         mSummonerApi = mRetrofit.create(SummonerApi.class);
     }

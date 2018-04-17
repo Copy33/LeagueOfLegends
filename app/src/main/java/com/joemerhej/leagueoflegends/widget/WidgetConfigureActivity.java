@@ -14,17 +14,21 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.joemerhej.leagueoflegends.R;
+import com.joemerhej.leagueoflegends.customviews.RegionSpinnerAdapter;
 import com.joemerhej.leagueoflegends.enums.QueueType;
-import com.joemerhej.leagueoflegends.enums.Region;
+import com.joemerhej.leagueoflegends.enums.RegionCode;
 import com.joemerhej.leagueoflegends.models.Profile;
 import com.joemerhej.leagueoflegends.models.QueueRank;
+import com.joemerhej.leagueoflegends.models.Region;
 import com.joemerhej.leagueoflegends.pojos.RankedData;
 import com.joemerhej.leagueoflegends.pojos.Summoner;
 import com.joemerhej.leagueoflegends.serverrequests.SummonerRequest;
@@ -33,6 +37,8 @@ import com.joemerhej.leagueoflegends.sharedpreferences.SharedPreferencesManager;
 import com.joemerhej.leagueoflegends.utils.Utils;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -49,6 +55,7 @@ public class WidgetConfigureActivity extends Activity
     // views
     private LinearLayout mBackgroundLinearLayout;
     private EditText mSummonerNameEditText;
+    private Spinner mRegionSpinner;
     private TextView mUpdatedTextView;
     private ImageView mRankImageImageView;
     private ImageView mRankNameImageView;
@@ -101,11 +108,45 @@ public class WidgetConfigureActivity extends Activity
 
         // initialize the views
         mSummonerNameEditText = findViewById(R.id.widgetactiviy_summoner_name_text);
+        mRegionSpinner = findViewById(R.id.widgetactivity_region_spinner);
         mAddWidgetButton = findViewById(R.id.widgetactivity_add_button);
         mUpdatedTextView = findViewById(R.id.widgetactivity_updated_text);
         mRankImageImageView = findViewById(R.id.widgetactivity_rank_image);
         mRankNameImageView = findViewById(R.id.widgetactivity_rank_name_text);
         mSummonerNameImageView = findViewById(R.id.widgetactivity_summoner_name_text);
+
+        // set up region spinner
+        List<Region> regions = new ArrayList<>();
+        regions.add(new Region("North America", RegionCode.NA, R.drawable.flag_na));
+        regions.add(new Region("Korea", RegionCode.KR, R.drawable.flag_kr));
+        regions.add(new Region("Japan", RegionCode.JP, R.drawable.flag_jp));
+        regions.add(new Region("EU West", RegionCode.EUW, R.drawable.flag_euw));
+        regions.add(new Region("EU Nordic & East", RegionCode.EUNE, R.drawable.flag_eune));
+        regions.add(new Region("Oceania", RegionCode.OCE, R.drawable.flag_oce));
+        regions.add(new Region("Brazil", RegionCode.BR, R.drawable.flag_br));
+        regions.add(new Region("LAS", RegionCode.LAS, R.drawable.flag_las));
+        regions.add(new Region("LAN", RegionCode.LAN, R.drawable.flag_lan));
+        regions.add(new Region("Russia", RegionCode.RU, R.drawable.flag_ru));
+        regions.add(new Region("Turkey", RegionCode.TR, R.drawable.flag_tr));
+        regions.add(new Region("PBE", RegionCode.PBE, R.drawable.flag_pbe));
+
+        RegionSpinnerAdapter regionSpinnerAdapter = new RegionSpinnerAdapter(this, regions);
+        mRegionSpinner.setAdapter(regionSpinnerAdapter);
+        mRegionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                Log.d("debug", "Selected region number " + position);
+                mRegionSpinner.setSelection(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent)
+            {
+                Log.d("debug", "Nothing Selected");
+            }
+        });
 
         // check if summoner name already populated (edit) or not (new widget)
         mSummonerNameEditText.setText(SharedPreferencesManager.readWidgetString(SharedPreferencesKey.SUMMONER_NAME, mWidgetId));
@@ -224,7 +265,7 @@ public class WidgetConfigureActivity extends Activity
     void populatePreviewWithNewData(String summonerName)
     {
         // make the request to fetch new data
-        final SummonerRequest summonerRequest = new SummonerRequest(Region.EUNE);
+        final SummonerRequest summonerRequest = new SummonerRequest(RegionCode.EUNE);
         summonerRequest.getSummoner(summonerName, Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<Summoner>()
         {
             @Override

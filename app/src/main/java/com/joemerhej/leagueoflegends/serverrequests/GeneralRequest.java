@@ -3,7 +3,7 @@ package com.joemerhej.leagueoflegends.serverrequests;
 import android.util.Log;
 
 import com.joemerhej.leagueoflegends.apis.GeneralApi;
-import com.joemerhej.leagueoflegends.enums.Region;
+import com.joemerhej.leagueoflegends.enums.RegionCode;
 
 import java.util.List;
 
@@ -33,9 +33,9 @@ public class GeneralRequest
 
 
 
-    public GeneralRequest(Region region)
+    public GeneralRequest(RegionCode regionCode)
     {
-        mBaseUrl = "https://" + region.getCode() + ".api.riotgames.com/";
+        mBaseUrl = "https://" + regionCode.getCode() + ".api.riotgames.com/";
         mRetrofit = RetrofitClient.getClient(mBaseUrl);
         mGeneralApi = mRetrofit.create(GeneralApi.class);
     }

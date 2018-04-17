@@ -20,4 +20,8 @@
     <string name="acc_summoner_name">summoner</string>
     <string name="acc_rank_image_name">rank image</string>
 
+    <!-- RegionCode Spinner strings -->
+    <string name="region_spinner_title">Region</string>
+    <string name="region_spinner_name">Region</string>
+
 </resources>

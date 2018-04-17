@@ -4,24 +4,24 @@ package com.joemerhej.leagueoflegends.enums;
  * Created by Joe Merhej on 4/13/18.
  */
 
-public enum Region
+public enum RegionCode
 {
-    BR("br1"),
-    EUNE("eun1"),
-    EUW("euw1"),
-    JP("jp1"),
-    KR("kr"),
-    LAN("la1"),
-    LAS("la2"),
     NA("na1"),
+    KR("kr"),
+    JP("jp1"),
+    EUW("euw1"),
+    EUNE("eun1"),
     OCE("oc1"),
-    TR("tr1"),
+    BR("br1"),
+    LAS("la2"),
+    LAN("la1"),
+    PBE("pbe1"),
     RU("ru"),
-    PBE("pbe1");
+    TR("tr1");
 
     private final String code;
 
-    Region(String code)
+    RegionCode(String code)
     {
         this.code = code;
     }

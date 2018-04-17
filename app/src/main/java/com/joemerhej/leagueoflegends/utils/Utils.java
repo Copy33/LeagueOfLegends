@@ -50,7 +50,7 @@ public final class Utils
 
     public static String getApiKey()
     {
-        return "RGAPI-de3c4cc2-9f0a-4c42-966b-9dca4619bb1c";
+        return "RGAPI-143b7936-1f8e-4565-b245-32ccbc6f6f8e";
     }
 
 }
