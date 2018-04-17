@@ -23,7 +23,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.joemerhej.leagueoflegends.R;
-import com.joemerhej.leagueoflegends.customviews.RegionSpinnerAdapter;
+import com.joemerhej.leagueoflegends.adapters.RegionSpinnerAdapter;
 import com.joemerhej.leagueoflegends.enums.QueueType;
 import com.joemerhej.leagueoflegends.enums.RegionCode;
 import com.joemerhej.leagueoflegends.models.Profile;
@@ -34,11 +34,11 @@ import com.joemerhej.leagueoflegends.pojos.Summoner;
 import com.joemerhej.leagueoflegends.serverrequests.SummonerRequest;
 import com.joemerhej.leagueoflegends.sharedpreferences.SharedPreferencesKey;
 import com.joemerhej.leagueoflegends.sharedpreferences.SharedPreferencesManager;
+import com.joemerhej.leagueoflegends.utils.Regions;
 import com.joemerhej.leagueoflegends.utils.Utils;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -56,10 +56,11 @@ public class WidgetConfigureActivity extends Activity
     private LinearLayout mBackgroundLinearLayout;
     private EditText mSummonerNameEditText;
     private Spinner mRegionSpinner;
-    private TextView mUpdatedTextView;
-    private ImageView mRankImageImageView;
-    private ImageView mRankNameImageView;
-    private ImageView mSummonerNameImageView;
+    private RegionSpinnerAdapter mRegionSpinnerAdapter;
+    private TextView mPreviewUpdatedTextView;
+    private ImageView mPreviewRankImageImageView;
+    private ImageView mPreviewRankNameImageView;
+    private ImageView mPreviewSummonerNameImageView;
     private Button mAddWidgetButton;
 
 
@@ -71,7 +72,7 @@ public class WidgetConfigureActivity extends Activity
     @Override
     public void onCreate(Bundle icicle)
     {
-        Log.d("debug", "METHOD - Activity: OnCreate");
+        Log.d("asd", "METHOD - Activity: OnCreate");
 
         super.onCreate(icicle);
 
@@ -110,41 +111,52 @@ public class WidgetConfigureActivity extends Activity
         mSummonerNameEditText = findViewById(R.id.widgetactiviy_summoner_name_text);
         mRegionSpinner = findViewById(R.id.widgetactivity_region_spinner);
         mAddWidgetButton = findViewById(R.id.widgetactivity_add_button);
-        mUpdatedTextView = findViewById(R.id.widgetactivity_updated_text);
-        mRankImageImageView = findViewById(R.id.widgetactivity_rank_image);
-        mRankNameImageView = findViewById(R.id.widgetactivity_rank_name_text);
-        mSummonerNameImageView = findViewById(R.id.widgetactivity_summoner_name_text);
+        mPreviewUpdatedTextView = findViewById(R.id.widgetactivity_updated_text);
+        mPreviewRankImageImageView = findViewById(R.id.widgetactivity_rank_image);
+        mPreviewRankNameImageView = findViewById(R.id.widgetactivity_rank_name_text);
+        mPreviewSummonerNameImageView = findViewById(R.id.widgetactivity_summoner_name_text);
 
         // set up region spinner
         List<Region> regions = new ArrayList<>();
-        regions.add(new Region("North America", RegionCode.NA, R.drawable.flag_na));
-        regions.add(new Region("Korea", RegionCode.KR, R.drawable.flag_kr));
-        regions.add(new Region("Japan", RegionCode.JP, R.drawable.flag_jp));
-        regions.add(new Region("EU West", RegionCode.EUW, R.drawable.flag_euw));
-        regions.add(new Region("EU Nordic & East", RegionCode.EUNE, R.drawable.flag_eune));
-        regions.add(new Region("Oceania", RegionCode.OCE, R.drawable.flag_oce));
-        regions.add(new Region("Brazil", RegionCode.BR, R.drawable.flag_br));
-        regions.add(new Region("LAS", RegionCode.LAS, R.drawable.flag_las));
-        regions.add(new Region("LAN", RegionCode.LAN, R.drawable.flag_lan));
-        regions.add(new Region("Russia", RegionCode.RU, R.drawable.flag_ru));
-        regions.add(new Region("Turkey", RegionCode.TR, R.drawable.flag_tr));
-        regions.add(new Region("PBE", RegionCode.PBE, R.drawable.flag_pbe));
+        regions.add(Regions.NORTH_AMERICA);
+        regions.add(Regions.KOREA);
+        regions.add(Regions.JAPAN);
+        regions.add(Regions.EUROPE_WEST);
+        regions.add(Regions.EUROPE_NORDIC_AND_EAST);
+        regions.add(Regions.OCEANIA);
+        regions.add(Regions.BRAZIL);
+        regions.add(Regions.LATIN_AMERICA_SOUTH);
+        regions.add(Regions.LATIN_AMERICA_NORTH);
+        regions.add(Regions.RUSSIA);
+        regions.add(Regions.TURKEY);
+        regions.add(Regions.PUBLIC_BETA);
 
-        RegionSpinnerAdapter regionSpinnerAdapter = new RegionSpinnerAdapter(this, regions);
-        mRegionSpinner.setAdapter(regionSpinnerAdapter);
+        mRegionSpinnerAdapter = new RegionSpinnerAdapter(this, regions);
+        mRegionSpinner.setAdapter(mRegionSpinnerAdapter);
+
+        // region change listener
         mRegionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
         {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                Log.d("debug", "Selected region number " + position);
+                Log.d("asd", "Selected region number " + position);
                 mRegionSpinner.setSelection(position);
+
+                // clear preview if selected position is different from shared preferences stored region
+
+                String regionCodeSP = SharedPreferencesManager.readWidgetString(SharedPreferencesKey.REGION_CODE, mWidgetId);
+                Region regionSP = Utils.getRegionFromCode(RegionCode.from(regionCodeSP));
+                int positionSP = mRegionSpinnerAdapter.getRegions().indexOf(regionSP);
+
+                if(position != positionSP)
+                    clearSummonerConfiguration();
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent)
             {
-                Log.d("debug", "Nothing Selected");
+                Log.d("asd", "Nothing Selected");
             }
         });
 
@@ -152,36 +164,44 @@ public class WidgetConfigureActivity extends Activity
         mSummonerNameEditText.setText(SharedPreferencesManager.readWidgetString(SharedPreferencesKey.SUMMONER_NAME, mWidgetId));
         String summonerName = mSummonerNameEditText.getText().toString();
         mAddWidgetButton.setEnabled(false);
+
+        // if it's an edit, just fill the preview and the profile region
         if(!summonerName.equals(""))
         {
-            // if it's an edit, fill preview data from shared preferences
-            mUpdatedTextView.setText(getResources().getString(R.string.date_format, 1, DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date())));
+            // get profile region
+            mProfile.setRegion(Utils.getRegionFromCode(RegionCode.from(SharedPreferencesManager.readWidgetString(SharedPreferencesKey.REGION_CODE, mWidgetId))));
+
+            // set the spinner to the right region
+            mRegionSpinner.setSelection(mRegionSpinnerAdapter.getRegions().indexOf(mProfile.getRegion()));
+
+            // fill preview data from shared preferences
+            mPreviewUpdatedTextView.setText(getResources().getString(R.string.date_format, 1, DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date())));
 
             String soloDuoRankSP = SharedPreferencesManager.readWidgetString(SharedPreferencesKey.SUMMONER_SOLO_DUO_RANK, mWidgetId); // TODO: take the highest rank instead of just solo queue
-            final Long leaguePointsSP = SharedPreferencesManager.readWidgetLong(SharedPreferencesKey.SUMMONER_SOLO_DUO_LP, mWidgetId);    // TODO: maybe use these values to check new vs. old?
+            final Long leaguePointsSP = SharedPreferencesManager.readWidgetLong(SharedPreferencesKey.SUMMONER_SOLO_DUO_LP, mWidgetId);
             final int rankImageIdSP = SharedPreferencesManager.readWidgetInt(SharedPreferencesKey.RANK_IMAGE_RES_ID, mWidgetId);
 
-            // update the activity's views
+            // update the preview's views
             mSummonerNameEditText.setText(mSummonerNameEditText.getText().toString());
             mSummonerNameEditText.setSelection(mSummonerNameEditText.getText().length());
 
             final String dateString = DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date());
-            mUpdatedTextView.setText(getResources().getString(R.string.date_format, 1, dateString));
+            mPreviewUpdatedTextView.setText(getResources().getString(R.string.date_format, 1, dateString));
 
-            mRankImageImageView.setImageResource(rankImageIdSP);
+            mPreviewRankImageImageView.setImageResource(rankImageIdSP);
 
             Context context = getApplicationContext();
             String summonerRank = soloDuoRankSP + " - " + leaguePointsSP + " LP"; // TODO: take the highest rank instead of just solo queue
             Bitmap summonerRankBitmap = Utils.getFontBitmap(context, summonerRank, Color.WHITE, 14);
-            mRankNameImageView.setImageBitmap(summonerRankBitmap);
+            mPreviewRankNameImageView.setImageBitmap(summonerRankBitmap);
 
             Bitmap summonerNameBitmap = Utils.getFontBitmap(context, summonerName, Color.WHITE, 24);
-            mSummonerNameImageView.setImageBitmap(summonerNameBitmap);
+            mPreviewSummonerNameImageView.setImageBitmap(summonerNameBitmap);
 
             mAddWidgetButton.setEnabled(true);
         }
 
-        // listener to when keyboard action button (search) is clicked
+        // keyboard search button listener
         mSummonerNameEditText.setOnEditorActionListener(new TextView.OnEditorActionListener()
         {
             @Override
@@ -189,7 +209,7 @@ public class WidgetConfigureActivity extends Activity
             {
                 if(actionId == EditorInfo.IME_ACTION_SEARCH)
                 {
-                    Log.d("debug", "clicked search!");
+                    Log.d("asd", "clicked search!");
 
                     // hide virtual keyboard
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -198,17 +218,17 @@ public class WidgetConfigureActivity extends Activity
                         imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.RESULT_UNCHANGED_SHOWN);
                     }
 
-                    // check summoner name and determine add widget button state
+                    // if summoner name is invalid, disable add widget button
                     String summonerName = mSummonerNameEditText.getText().toString();
                     if(summonerName.isEmpty() || !summonerName.matches("^[0-9\\p{L} _\\.]+$"))
                     {
-                        Log.e("debug", "Illegal Summoner Name: " + summonerName);
+                        Log.e("asd", "Illegal Summoner Name: " + summonerName);
 
                         mAddWidgetButton.setEnabled(false);
                         return false;
                     }
 
-                    // fetch new data and populate the preview
+                    // if summoner name is valid, fetch new data and populate the preview
                     populatePreviewWithNewData(summonerName);
                 }
 
@@ -216,7 +236,7 @@ public class WidgetConfigureActivity extends Activity
             }
         });
 
-        // add the click listener to the add widget button that will update the widget and add it (return its id)
+        // add widget button listener
         mAddWidgetButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
@@ -231,6 +251,7 @@ public class WidgetConfigureActivity extends Activity
                     final int rankImageIdNEW = getResources().getIdentifier(mProfile.getSoloDuo().getRank().getName().replace(" ", "_").toLowerCase(), "drawable", getPackageName());
                     SharedPreferencesManager.writeWidgetInt(SharedPreferencesKey.RANK_IMAGE_RES_ID, mWidgetId, rankImageIdNEW);
 
+                    SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.REGION_CODE, mWidgetId, mProfile.getRegion().getCode().value());
                     SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.SUMMONER_NAME, mWidgetId, mProfile.getSummonerName());
                     SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_ID, mWidgetId, mProfile.getId());
                     SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_ICON_ID, mWidgetId, mProfile.getProfileIconId());
@@ -262,10 +283,12 @@ public class WidgetConfigureActivity extends Activity
         });
     }
 
+    // makes a summoner request and populates the preview with new data
     void populatePreviewWithNewData(String summonerName)
     {
         // make the request to fetch new data
-        final SummonerRequest summonerRequest = new SummonerRequest(RegionCode.EUNE);
+        final Region selectedRegion = mRegionSpinnerAdapter.getRegions().get(mRegionSpinner.getSelectedItemPosition());
+        final SummonerRequest summonerRequest = new SummonerRequest(selectedRegion.getCode());
         summonerRequest.getSummoner(summonerName, Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<Summoner>()
         {
             @Override
@@ -273,8 +296,8 @@ public class WidgetConfigureActivity extends Activity
             {
                 if(response != null && error == null)
                 {
-                    // fill the new data in the mmProfile
-                    mProfile.set(response.getName(), response.getId(), response.getProfileIconId(), response.getSummonerLevel());
+                    // fill the new data in mProfile
+                    mProfile.set(selectedRegion, response.getName(), response.getId(), response.getProfileIconId(), response.getSummonerLevel());
 
                     summonerRequest.getLeagueRanks(mProfile.getId().toString(), Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<List<RankedData>>()
                     {
@@ -305,47 +328,61 @@ public class WidgetConfigureActivity extends Activity
                                 // get the new rank image resource id
                                 final int rankImageId = getResources().getIdentifier(mProfile.getSoloDuo().getRank().getName().replace(" ", "_").toLowerCase(), "drawable", getPackageName());
 
-                                // update the activity's views
+                                // update the preview's views
                                 final String dateString = DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date());
-                                mUpdatedTextView.setText(getResources().getString(R.string.date_format, 1, dateString));
-                                mRankImageImageView.setImageResource(rankImageId);
+                                mPreviewUpdatedTextView.setText(getResources().getString(R.string.date_format, 1, dateString));
+                                mPreviewRankImageImageView.setImageResource(rankImageId);
+                                mPreviewRankImageImageView.setVisibility(View.VISIBLE);
 
                                 Context context = getApplicationContext();
                                 String summonerRank = mProfile.getSoloDuo().getRank().getName() + " - " + mProfile.getSoloDuo().getLeaguePoints() + " LP"; // TODO: take the highest rank instead of just solo queue
                                 Bitmap summonerRankBitmap = Utils.getFontBitmap(context, summonerRank, Color.WHITE, 14);
-                                mRankNameImageView.setImageBitmap(summonerRankBitmap);
+                                mPreviewRankNameImageView.setImageBitmap(summonerRankBitmap);
 
                                 Bitmap summonerNameBitmap = Utils.getFontBitmap(context, mProfile.getSummonerName(), Color.WHITE, 24);
-                                mSummonerNameImageView.setImageBitmap(summonerNameBitmap);
+                                mPreviewSummonerNameImageView.setImageBitmap(summonerNameBitmap);
 
                                 mAddWidgetButton.setEnabled(true);
                                 mIsNewProfile = true;
                             }
                             else if(error != null)
                             {
-                                Log.e("debug", "ERROR - 1: " + error);
+                                Log.e("asd", "ERROR - 1: " + error);
                             }
                         }
 
                         @Override
                         public void onFailure(Throwable t)
                         {
-                            Log.e("debug", "ERROR - 2: " + t.getLocalizedMessage());
+                            Log.e("asd", "ERROR - 2: " + t.getLocalizedMessage());
                         }
                     });
                 }
                 else
                 {
-                    Log.e("debug", "ERROR - 3: " + error);
+                    Log.e("asd", "ERROR - 3: " + error);
                 }
             }
 
             @Override
             public void onFailure(Throwable t)
             {
-                Log.e("debug", "ERROR - 4: " + t.getLocalizedMessage());
+                Log.e("asd", "ERROR - 4: " + t.getLocalizedMessage());
             }
         });
+    }
+
+    private void clearSummonerConfiguration()
+    {
+        Log.d("asd", "CLEAR SUMMONER CONFIGURATION");
+        mSummonerNameEditText.setText("");
+        mAddWidgetButton.setEnabled(false);
+
+        mPreviewRankImageImageView.setVisibility(View.INVISIBLE);
+        Bitmap rankNameBitmap = Utils.getFontBitmap(WidgetConfigureActivity.this, " ", Color.WHITE, 24);
+        mPreviewRankNameImageView.setImageBitmap(rankNameBitmap);
+        Bitmap summonerNameBitmap = Utils.getFontBitmap(WidgetConfigureActivity.this, " ", Color.WHITE, 24);
+        mPreviewSummonerNameImageView.setImageBitmap(summonerNameBitmap);
     }
 }
 

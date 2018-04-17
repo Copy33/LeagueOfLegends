@@ -21,6 +21,7 @@ import com.joemerhej.leagueoflegends.pojos.Summoner;
 import com.joemerhej.leagueoflegends.serverrequests.SummonerRequest;
 import com.joemerhej.leagueoflegends.sharedpreferences.SharedPreferencesKey;
 import com.joemerhej.leagueoflegends.sharedpreferences.SharedPreferencesManager;
+import com.joemerhej.leagueoflegends.utils.Regions;
 import com.joemerhej.leagueoflegends.utils.Utils;
 
 import java.text.DateFormat;
@@ -35,7 +36,7 @@ public class Widget extends AppWidgetProvider
 {
     static void updateWidget(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId)
     {
-        Log.d("debug", "METHOD - ID " + appWidgetId + ": UpdateWidget");
+        Log.d("asd", "METHOD - ID " + appWidgetId + ": UpdateWidget");
 
         // create a profile for convenience
         final Profile profile = new Profile();
@@ -54,12 +55,13 @@ public class Widget extends AppWidgetProvider
         if(summonerNameSP.isEmpty())
             return;
 
+        final String regionCodeSP = SharedPreferencesManager.readWidgetString(SharedPreferencesKey.REGION_CODE, appWidgetId);
         final String soloDuoRankSP = SharedPreferencesManager.readWidgetString(SharedPreferencesKey.SUMMONER_SOLO_DUO_RANK, appWidgetId); // TODO: take the highest rank instead of just solo queue
-        final Long leaguePointsSP = SharedPreferencesManager.readWidgetLong(SharedPreferencesKey.SUMMONER_SOLO_DUO_LP, appWidgetId);    // TODO: maybe use these values to check new vs. old?
+        final Long leaguePointsSP = SharedPreferencesManager.readWidgetLong(SharedPreferencesKey.SUMMONER_SOLO_DUO_LP, appWidgetId);    // also TODO: maybe use these values to check new vs. old?
         final int rankImageIdSP = SharedPreferencesManager.readWidgetInt(SharedPreferencesKey.RANK_IMAGE_RES_ID, appWidgetId);
 
         // make the request to fetch new data
-        final SummonerRequest summonerRequest = new SummonerRequest(RegionCode.EUNE);
+        final SummonerRequest summonerRequest = new SummonerRequest(RegionCode.from(regionCodeSP));
         summonerRequest.getSummoner(summonerNameSP, Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<Summoner>()
         {
             @Override
@@ -68,7 +70,7 @@ public class Widget extends AppWidgetProvider
                 if(response != null && error == null)
                 {
                     // fill the new data in the profile
-                    profile.set(response.getName(), response.getId(), response.getProfileIconId(), response.getSummonerLevel());
+                    profile.set(Utils.getRegionFromCode(RegionCode.from(regionCodeSP)), response.getName(), response.getId(), response.getProfileIconId(), response.getSummonerLevel());
 
                     summonerRequest.getLeagueRanks(profile.getId().toString(), Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<List<RankedData>>()
                     {
@@ -102,6 +104,7 @@ public class Widget extends AppWidgetProvider
                                 // store the newly fetched info in SharedPreferences
                                 SharedPreferencesManager.writeWidgetInt(SharedPreferencesKey.RANK_IMAGE_RES_ID, appWidgetId, rankImageIdNEW);
 
+                                SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.REGION_CODE, appWidgetId, profile.getRegion().getCode().value());
                                 SharedPreferencesManager.writeWidgetString(SharedPreferencesKey.SUMMONER_NAME, appWidgetId, profile.getSummonerName());
                                 SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_ID, appWidgetId, profile.getId());
                                 SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_ICON_ID, appWidgetId, profile.getProfileIconId());
@@ -163,27 +166,27 @@ public class Widget extends AppWidgetProvider
                             }
                             else if(error != null)
                             {
-                                Log.e("debug", "ERROR - 1: " + error);
+                                Log.e("asd", "ERROR - 1: " + error);
                             }
                         }
 
                         @Override
                         public void onFailure(Throwable t)
                         {
-                            Log.e("debug", "ERROR - 2: " + t.getLocalizedMessage());
+                            Log.e("asd", "ERROR - 2: " + t.getLocalizedMessage());
                         }
                     });
                 }
                 else
                 {
-                    Log.e("debug", "ERROR - 3: " + error);
+                    Log.e("asd", "ERROR - 3: " + error);
                 }
             }
 
             @Override
             public void onFailure(Throwable t)
             {
-                Log.e("debug", "ERROR - 4: " + t.getLocalizedMessage());
+                Log.e("asd", "ERROR - 4: " + t.getLocalizedMessage());
             }
         });
     }
@@ -194,7 +197,7 @@ public class Widget extends AppWidgetProvider
         // There may be multiple widgets active, so update all of them
         for(int appWidgetId : appWidgetIds)
         {
-            Log.d("debug", "METHOD - ID " + appWidgetId + ": OnUpdate");
+            Log.d("asd", "METHOD - ID " + appWidgetId + ": OnUpdate");
 
             updateWidget(context, appWidgetManager, appWidgetId);
         }
@@ -218,12 +221,12 @@ public class Widget extends AppWidgetProvider
             widgetId = 0;
         }
 
-        Log.d("debug", "METHOD - ID " + widgetId + ": OnReceive");
+        Log.d("asd", "METHOD - ID " + widgetId + ": OnReceive");
 
         // check which action is returned (ie. which button was pressed)
         if(intent.getAction().equals(WidgetAction.REFRESH.getValue()))
         {
-            Log.d("debug", "ACTION - ID " + widgetId + ": Refresh ");
+            Log.d("asd", "ACTION - ID " + widgetId + ": Refresh ");
 
             // call update widget
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
@@ -239,9 +242,10 @@ public class Widget extends AppWidgetProvider
         // When the user deletes the widget, delete the preference associated with it
         for(int appWidgetId : appWidgetIds)
         {
-            Log.d("debug", "METHOD - ID " + appWidgetId + ": OnDeleted");
+            Log.d("asd", "METHOD - ID " + appWidgetId + ": OnDeleted");
 
             SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.COUNT, appWidgetId);
+            SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.REGION_CODE, appWidgetId);
             SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.RANK_IMAGE_RES_ID, appWidgetId);
             SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.SUMMONER_NAME, appWidgetId);
             SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.SUMMONER_ID, appWidgetId);
@@ -263,7 +267,7 @@ public class Widget extends AppWidgetProvider
     @Override
     public void onEnabled(Context context)
     {
-        Log.d("debug", "METHOD: OnEnabled - FIRST WIDGET");
+        Log.d("asd", "METHOD: OnEnabled - FIRST WIDGET");
 
         // initialize shared preferences manager
         SharedPreferencesManager.init(context);
@@ -272,7 +276,7 @@ public class Widget extends AppWidgetProvider
     @Override
     public void onDisabled(Context context)
     {
-        Log.d("debug", "METHOD: OnDisabled - LAST WIDGET");
+        Log.d("asd", "METHOD: OnDisabled - LAST WIDGET");
 
         // Enter relevant functionality for when the last widget is disabled
     }
@@ -280,7 +284,7 @@ public class Widget extends AppWidgetProvider
     @Override
     public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions)
     {
-        Log.d("debug", "METHOD - ID " + appWidgetId + ": OnAppWidgetOptionsChanged");
+        Log.d("asd", "METHOD - ID " + appWidgetId + ": OnAppWidgetOptionsChanged");
     }
 }
 

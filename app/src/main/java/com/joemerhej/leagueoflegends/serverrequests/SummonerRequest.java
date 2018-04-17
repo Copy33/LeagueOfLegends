@@ -37,7 +37,7 @@ public class SummonerRequest
 
     public SummonerRequest(RegionCode regionCode)
     {
-        mBaseUrl = "https://" + regionCode.getCode() + ".api.riotgames.com/";
+        mBaseUrl = "https://" + regionCode.value() + ".api.riotgames.com/";
         mRetrofit = RetrofitClient.getClient(mBaseUrl);
         mSummonerApi = mRetrofit.create(SummonerApi.class);
     }

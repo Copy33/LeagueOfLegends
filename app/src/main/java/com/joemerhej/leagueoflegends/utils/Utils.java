@@ -9,6 +9,8 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.util.TypedValue;
 
 import com.joemerhej.leagueoflegends.R;
+import com.joemerhej.leagueoflegends.enums.RegionCode;
+import com.joemerhej.leagueoflegends.models.Region;
 
 /**
  * Created by Joe Merhej on 4/15/18.
@@ -51,6 +53,39 @@ public final class Utils
     public static String getApiKey()
     {
         return "RGAPI-143b7936-1f8e-4565-b245-32ccbc6f6f8e";
+    }
+
+    public static Region getRegionFromCode(RegionCode regionCode)
+    {
+        switch(regionCode)
+        {
+            case NA:
+                return Regions.NORTH_AMERICA;
+            case KR:
+                return Regions.KOREA;
+            case JP:
+                return Regions.JAPAN;
+            case EUW:
+                return Regions.EUROPE_WEST;
+            case EUNE:
+                return Regions.EUROPE_NORDIC_AND_EAST;
+            case OCE:
+                return Regions.OCEANIA;
+            case BR:
+                return Regions.BRAZIL;
+            case LAS:
+                return Regions.LATIN_AMERICA_SOUTH;
+            case LAN:
+                return Regions.LATIN_AMERICA_NORTH;
+            case RU:
+                return Regions.RUSSIA;
+            case TR:
+                return Regions.TURKEY;
+            case PBE:
+                return Regions.PUBLIC_BETA;
+            default:
+                return Regions.NORTH_AMERICA;
+        }
     }
 
 }

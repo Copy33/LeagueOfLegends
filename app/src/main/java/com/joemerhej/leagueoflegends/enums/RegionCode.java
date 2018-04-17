@@ -26,8 +26,42 @@ public enum RegionCode
         this.code = code;
     }
 
-    public String getCode()
+    public String value()
     {
         return code;
+    }
+
+    public static RegionCode from(String code)
+    {
+        switch(code)
+        {
+            case "na1":
+                return NA;
+            case "kr":
+                return KR;
+            case "jp1":
+                return JP;
+            case "euw1":
+                return EUW;
+            case "eun1":
+                return EUNE;
+            case "oc1":
+                return OCE;
+            case "br1":
+                return BR;
+            case "la2":
+                return LAS;
+            case "la1":
+                return LAN;
+            case "pbe1":
+                return PBE;
+            case "ru":
+                return RU;
+            case "tr1":
+                return TR;
+            default:
+                return NA;
+
+        }
     }
 }

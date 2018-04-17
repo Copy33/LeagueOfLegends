@@ -1,6 +1,7 @@
 package com.joemerhej.leagueoflegends.models;
 
 import com.joemerhej.leagueoflegends.enums.QueueType;
+import com.joemerhej.leagueoflegends.utils.Regions;
 
 /**
  * Created by Joe Merhej on 4/13/18.
@@ -8,6 +9,7 @@ import com.joemerhej.leagueoflegends.enums.QueueType;
 
 public class Profile
 {
+    private Region region;
     private String summonerName;
     private Long id;
     private Long profileIconId;
@@ -19,6 +21,7 @@ public class Profile
 
     public Profile()
     {
+        setRegion(Regions.NORTH_AMERICA);
         summonerName = "";
         id = 0L;
         profileIconId = 0L;
@@ -51,8 +54,9 @@ public class Profile
                 '}';
     }
 
-    public void set(String name, Long id, Long profileIconId, Long summonerLevel, QueueRank soloDuo, QueueRank flex5, QueueRank flex3)
+    public void set(Region region, String name, Long id, Long profileIconId, Long summonerLevel, QueueRank soloDuo, QueueRank flex5, QueueRank flex3)
     {
+        this.region = region;
         this.summonerName = name;
         this.id = id;
         this.profileIconId = profileIconId;
@@ -62,8 +66,9 @@ public class Profile
         Flex3 = flex3;
     }
 
-    public void set(String name, Long id, Long profileIconId, Long summonerLevel)
+    public void set(Region region, String name, Long id, Long profileIconId, Long summonerLevel)
     {
+        this.region = region;
         this.summonerName = name;
         this.id = id;
         this.profileIconId = profileIconId;
@@ -75,6 +80,16 @@ public class Profile
         SoloDuo = soloDuo;
         Flex5 = flex5;
         Flex3 = flex3;
+    }
+
+    public Region getRegion()
+    {
+        return region;
+    }
+
+    public void setRegion(Region region)
+    {
+        this.region = region;
     }
 
     public String getSummonerName()

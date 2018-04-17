@@ -1,4 +1,4 @@
-package com.joemerhej.leagueoflegends.customviews;
+package com.joemerhej.leagueoflegends.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -12,8 +12,6 @@ import android.widget.TextView;
 
 import com.joemerhej.leagueoflegends.R;
 import com.joemerhej.leagueoflegends.models.Region;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -58,4 +56,8 @@ public class RegionSpinnerAdapter extends ArrayAdapter
         return spinnerRow;
     }
 
+    public List<Region> getRegions()
+    {
+        return mRegions;
+    }
 }

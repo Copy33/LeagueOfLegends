@@ -8,6 +8,7 @@ public enum SharedPreferencesKey
 {
     COUNT("c_"),
     RANK_IMAGE_RES_ID("riri"),
+    REGION_CODE("rc_"),
     SUMMONER_NAME("sn_"),
     SUMMONER_ID("sid_"),
     SUMMONER_ICON_ID("siid_"),

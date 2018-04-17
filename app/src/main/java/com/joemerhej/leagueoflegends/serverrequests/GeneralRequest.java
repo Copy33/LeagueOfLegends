@@ -35,7 +35,7 @@ public class GeneralRequest
 
     public GeneralRequest(RegionCode regionCode)
     {
-        mBaseUrl = "https://" + regionCode.getCode() + ".api.riotgames.com/";
+        mBaseUrl = "https://" + regionCode.value() + ".api.riotgames.com/";
         mRetrofit = RetrofitClient.getClient(mBaseUrl);
         mGeneralApi = mRetrofit.create(GeneralApi.class);
     }
