@@ -2,22 +2,15 @@ package com.joemerhej.leagueoflegends.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.joemerhej.leagueoflegends.R;
-import com.joemerhej.leagueoflegends.models.Profile;
 
 
 public class MainActivity extends AppCompatActivity
 {
     // properties
-    private Profile mProfile;
 
     // views
-    private ImageView mProfileIcon;
-    private TextView mProfileName;
-    private ImageView mRankImage;
 
 
     @Override
@@ -25,12 +18,6 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mProfile = new Profile();
-
-        mProfileName = findViewById(R.id.mainactivity_profile_name);
-        mRankImage = findViewById(R.id.mainactivity_rank_image);
-        mProfileIcon = findViewById(R.id.mainactivity_profile_icon);
     }
 
 

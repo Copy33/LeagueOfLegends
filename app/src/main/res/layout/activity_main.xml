@@ -8,39 +8,5 @@
     android:layout_marginEnd="10dp"
     android:layout_marginStart="10dp"
     tools:context="com.joemerhej.leagueoflegends.activities.MainActivity">
-
-
-    <android.support.v7.widget.AppCompatImageView
-        android:id="@+id/mainactivity_rank_image"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingBottom="20dp"
-        android:paddingTop="20dp">
-
-        <android.support.v7.widget.AppCompatImageView
-            android:id="@+id/mainactivity_profile_icon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/account_box"/>
-
-        <TextView
-            android:id="@+id/mainactivity_profile_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingEnd="10dp"
-            android:paddingStart="10dp"
-            android:text="mojojo"
-            android:fontFamily="@font/myfontfamily"
-            android:textSize="20sp"/>
-
-    </LinearLayout>
-
+    
 </RelativeLayout>
