@@ -8,13 +8,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.joemerhej.leagueoflegends.R;
 import com.joemerhej.leagueoflegends.enums.QueueType;
 import com.joemerhej.leagueoflegends.enums.RegionCode;
+import com.joemerhej.leagueoflegends.errors.Error;
 import com.joemerhej.leagueoflegends.models.Profile;
 import com.joemerhej.leagueoflegends.models.QueueRank;
 import com.joemerhej.leagueoflegends.pojos.RankedData;
@@ -66,7 +66,7 @@ public class Widget extends AppWidgetProvider
         summonerRequest.getSummoner(summonerNameSP, Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<Summoner>()
         {
             @Override
-            public void onResponse(Summoner response, String error)
+            public void onResponse(Summoner response, Error error)
             {
                 if(response != null && error == null)
                 {
@@ -76,7 +76,7 @@ public class Widget extends AppWidgetProvider
                     summonerRequest.getLeagueRanks(profile.getId().toString(), Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<List<RankedData>>()
                     {
                         @Override
-                        public void onResponse(List<RankedData> response, String error)
+                        public void onResponse(List<RankedData> response, Error error)
                         {
                             if(response != null && error == null)
                             {
@@ -174,27 +174,31 @@ public class Widget extends AppWidgetProvider
                             }
                             else if(error != null)
                             {
-                                Log.e("asd", "ERROR - 1: " + error);
+                                //TODO: What to do when there's a server error in the widget
+                                Log.e("asd", "WIDGET ERROR 1 - " + error.getCode());
                             }
                         }
 
                         @Override
-                        public void onFailure(Throwable t)
+                        public void onFailure(Error error)
                         {
-                            Log.e("asd", "ERROR - 2: " + t.getLocalizedMessage());
+                            //TODO: What to do when there's a server error in the widget
+                            Log.e("asd", "WIDGET ERROR 2 - " + error.getCode());
                         }
                     });
                 }
                 else
                 {
-                    Log.e("asd", "ERROR - 3: " + error);
+                    //TODO: What to do when there's a server error in the widget
+                    Log.e("asd", "WIDGET ERROR 3 - " + error.getCode());
                 }
             }
 
             @Override
-            public void onFailure(Throwable t)
+            public void onFailure(Error error)
             {
-                Log.e("asd", "ERROR - 4: " + t.getLocalizedMessage());
+                //TODO: What to do when there's a server error in the widget
+                Log.e("asd", "WIDGET ERROR 4 - " + error.getCode());
             }
         });
     }

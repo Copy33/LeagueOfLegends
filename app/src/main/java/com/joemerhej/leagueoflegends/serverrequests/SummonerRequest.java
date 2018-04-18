@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.joemerhej.leagueoflegends.apis.SummonerApi;
 import com.joemerhej.leagueoflegends.enums.RegionCode;
+import com.joemerhej.leagueoflegends.errors.Error;
 import com.joemerhej.leagueoflegends.pojos.RankedData;
 import com.joemerhej.leagueoflegends.pojos.Summoner;
 
@@ -29,10 +30,10 @@ public class SummonerRequest
 
     public interface SummonerResponseCallback<T>
     {
-        void onResponse(T response, String error);
-        void onFailure(Throwable t);
-    }
+        void onResponse(T response, Error error);
 
+        void onFailure(Error error);
+    }
 
 
     public SummonerRequest(RegionCode regionCode)
@@ -58,24 +59,45 @@ public class SummonerRequest
                     }
                     else
                     {
-                        String message = "Error: " + String.valueOf(response.code()) + " - " + response.message() + "\n" + response.errorBody().string();
-                        summonerResponseCallback.onResponse(null, message);
+                        if(Error.from(response.code()) != Error.GENERIC_ERROR)
+                        {
+                            summonerResponseCallback.onResponse(null, Error.from(response.code()));
+                        }
+                        else
+                        {
+                            char firstDigit = String.valueOf(response.code()).charAt(0);
+
+                            if(firstDigit == '4')
+                            {
+                                summonerResponseCallback.onResponse(null, Error.BAD_REQUEST);
+                            }
+                            else if(firstDigit == '5')
+                            {
+                                summonerResponseCallback.onResponse(null, Error.INTERNAL_SERVER_ERROR);
+                            }
+                            else
+                            {
+                                String message = "Error: " + String.valueOf(response.code()) + " - " + response.message() + "\n" + response.errorBody().string();
+                                Log.e(TAG, message);
+                                summonerResponseCallback.onResponse(null, Error.GENERIC_ERROR);
+                            }
+                        }
                     }
                 }
                 catch(Exception e)
                 {
-                    summonerResponseCallback.onResponse(null, e.getLocalizedMessage());
                     Log.e(TAG, e.getLocalizedMessage());
                     e.printStackTrace();
+                    summonerResponseCallback.onResponse(null, Error.GENERIC_ERROR);
                 }
             }
 
             @Override
             public void onFailure(Call<Summoner> call, Throwable t)
             {
-                summonerResponseCallback.onFailure(t);
                 call.cancel();
                 Log.e(TAG, "FAILURE - " + t.toString());
+                summonerResponseCallback.onFailure(Error.NO_INTERNET);
             }
         });
     }
@@ -96,24 +118,39 @@ public class SummonerRequest
                     }
                     else
                     {
+                        if(Error.from(response.code()) != Error.GENERIC_ERROR)
+                        {
+                            summonerResponseCallback.onResponse(null, Error.from(response.code()));
+                        }
+                        else
+                        {
+                            char firstDigit = String.valueOf(response.code()).charAt(0);
+
+                            if(firstDigit == '4')
+                                summonerResponseCallback.onResponse(null, Error.BAD_REQUEST);
+                            else if(firstDigit == '5')
+                                summonerResponseCallback.onResponse(null, Error.INTERNAL_SERVER_ERROR);
+                        }
+
                         String message = "Error: " + String.valueOf(response.code()) + " - " + response.message() + "\n" + response.errorBody().string();
-                        summonerResponseCallback.onResponse(null, message);
+                        Log.e(TAG, message);
+                        summonerResponseCallback.onResponse(null, Error.GENERIC_ERROR);
                     }
                 }
                 catch(Exception e)
                 {
-                    summonerResponseCallback.onResponse(null, "Server Error");
-                    Log.e(TAG, "Server Error");
+                    Log.e(TAG, e.getLocalizedMessage());
                     e.printStackTrace();
+                    summonerResponseCallback.onResponse(null, Error.GENERIC_ERROR);
                 }
             }
 
             @Override
             public void onFailure(Call<List<RankedData>> call, Throwable t)
             {
-                summonerResponseCallback.onFailure(t);
                 call.cancel();
                 Log.e(TAG, "FAILURE - " + t.toString());
+                summonerResponseCallback.onFailure(Error.NO_INTERNET);
             }
         });
     }

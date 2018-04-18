@@ -4,14 +4,15 @@ import android.app.Activity;
 import android.app.WallpaperManager;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -30,6 +31,7 @@ import com.joemerhej.leagueoflegends.R;
 import com.joemerhej.leagueoflegends.adapters.RegionSpinnerAdapter;
 import com.joemerhej.leagueoflegends.enums.QueueType;
 import com.joemerhej.leagueoflegends.enums.RegionCode;
+import com.joemerhej.leagueoflegends.errors.Error;
 import com.joemerhej.leagueoflegends.models.Profile;
 import com.joemerhej.leagueoflegends.models.QueueRank;
 import com.joemerhej.leagueoflegends.models.Region;
@@ -162,7 +164,6 @@ public class WidgetConfigureActivity extends Activity
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                Log.d("asd", "Selected region number " + position);
                 mRegionSpinner.setSelection(position);
 
                 // clear preview if selected position is different from shared preferences stored region
@@ -177,7 +178,7 @@ public class WidgetConfigureActivity extends Activity
             @Override
             public void onNothingSelected(AdapterView<?> parent)
             {
-                Log.d("asd", "Nothing Selected");
+                //nothing happens, dropdown is dismissed
             }
         });
 
@@ -291,8 +292,7 @@ public class WidgetConfigureActivity extends Activity
                     String summonerName = mSummonerNameEditText.getText().toString();
                     if(summonerName.isEmpty() || !summonerName.matches("^[0-9\\p{L} _\\.]+$"))
                     {
-                        Log.e("asd", "Illegal Summoner Name: " + summonerName);
-
+                        showErrorDialog(Error.INVALID_SUMMONER_NAME);
                         mAddWidgetButton.setEnabled(false);
                         return false;
                     }
@@ -365,7 +365,7 @@ public class WidgetConfigureActivity extends Activity
         summonerRequest.getSummoner(summonerName, Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<Summoner>()
         {
             @Override
-            public void onResponse(Summoner response, String error)
+            public void onResponse(Summoner response, Error error)
             {
                 if(response != null && error == null)
                 {
@@ -375,7 +375,7 @@ public class WidgetConfigureActivity extends Activity
                     summonerRequest.getLeagueRanks(mProfile.getId().toString(), Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<List<RankedData>>()
                     {
                         @Override
-                        public void onResponse(List<RankedData> response, String error)
+                        public void onResponse(List<RankedData> response, Error error)
                         {
                             if(response != null && error == null)
                             {
@@ -426,27 +426,27 @@ public class WidgetConfigureActivity extends Activity
                             }
                             else if(error != null)
                             {
-                                Log.e("asd", "ERROR - 1: " + error);
+                                showErrorDialog(error);
                             }
                         }
 
                         @Override
-                        public void onFailure(Throwable t)
+                        public void onFailure(Error error)
                         {
-                            Log.e("asd", "ERROR - 2: " + t.getLocalizedMessage());
+                            showErrorDialog(error);
                         }
                     });
                 }
                 else
                 {
-                    Log.e("asd", "ERROR - 3: " + error);
+                    showErrorDialog(error);
                 }
             }
 
             @Override
-            public void onFailure(Throwable t)
+            public void onFailure(Error error)
             {
-                Log.e("asd", "ERROR - 4: " + t.getLocalizedMessage());
+                showErrorDialog(error);
             }
         });
     }
@@ -498,6 +498,74 @@ public class WidgetConfigureActivity extends Activity
         }
 
         mPreviewBackground.setBackgroundColor(mWidgetBackgroundColorId);
+    }
+
+    private void showErrorDialog(Error error)
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(WidgetConfigureActivity.this, android.R.style.Theme_Material_Dialog_Alert);
+
+        String title = "Oops";
+        String message = "Something went wrong, please try again.";
+
+        switch(error)
+        {
+            case GENERIC_ERROR:
+                title = "Oops";
+                message = "Something went wrong, please try again.";
+                break;
+            case NO_INTERNET:
+                title = "No Internet Connection";
+                message = "Please connect to the internet and try again. It's the 21st century and there are still places where a person can't get a reliable internet connection, shame.";
+                break;
+            case INVALID_SUMMONER_NAME:
+                title = "Invalid Summoner Name";
+                message = "Illegal characters in " + mSummonerNameEditText.getText().toString() + ", Riot doesn't like them anyways, it must be a typo or something, keyboards are crazy sometimes.";
+                break;
+            case BAD_REQUEST:
+                title = "Bad Request";
+                message = "The request you're trying to send got a no-no from Riot, my bad, please try again.";
+                break;
+            case UNAUTHORIZED:
+                title = "No Api Key";
+                message = "There is no api key associated with your request, this should never happen I would be surprised/impressed if someone sees this error.";
+                break;
+            case FORBIDDEN:
+                title = "Forbidden";
+                message = "The api key provided with this request is invalid, unless Riot has banned this app for some reason this should never happen.";
+                break;
+            case NOT_FOUND:
+                title = "Summoner Not Found";
+                message = "Summoner " + mSummonerNameEditText.getText().toString() + " not found in " + mProfile.getRegion().getName() + "! do you have the right region selected? maybe a typo in the summoner name? try again.";
+                break;
+            case LIMIT_EXCEEDED:
+                title = "Huge Call Volume";
+                message = "We are experiencing a huge call volume at the moment, Riot has limited the rate of requests from this app and we are all sad, please try again later.";
+                break;
+            case INTERNAL_SERVER_ERROR:
+                title = "Internal Server Error";
+                message = "Riot is experiencing an internal server error, not our fault! please try again later.";
+                break;
+            case SERVICE_UNAVAILABLE:
+                title = "Service Unavailable";
+                message = "Riot's service is unavailable right now, not our fault! please try again later.";
+                break;
+            default:
+                title = "Oops";
+                message = "Something went wrong, please try again.";
+                break;
+        }
+
+        builder.setTitle(title)
+               .setMessage(message)
+               .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener()
+               {
+                   public void onClick(DialogInterface dialog, int which)
+                   {
+                       // nothing happens, dialog is dismissed
+                   }
+               })
+               .setIcon(android.R.drawable.ic_dialog_alert)
+               .show();
     }
 }
 
