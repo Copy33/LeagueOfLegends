@@ -41,14 +41,8 @@ public class Widget extends AppWidgetProvider
         // create a profile for convenience
         final Profile profile = new Profile();
 
-        // get the count data to update from shared preferences and increase it by 1
-        final int widgetCount = SharedPreferencesManager.readWidgetInt(SharedPreferencesKey.COUNT, appWidgetId) + 1;
-
         // get the current time
         final String dateString = DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date());
-
-        // save data back the count to shared preferences
-        SharedPreferencesManager.writeWidgetInt(SharedPreferencesKey.COUNT, appWidgetId, widgetCount);
 
         // get all other data from shared preferences
         final String summonerNameSP = SharedPreferencesManager.readWidgetString(SharedPreferencesKey.SUMMONER_NAME, appWidgetId);
@@ -133,7 +127,7 @@ public class Widget extends AppWidgetProvider
                                 RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
 
                                 views.setInt(R.id.widget_background, "setBackgroundColor", colorId);
-                                views.setTextViewText(R.id.widget_updated_text, context.getResources().getString(R.string.date_format, widgetCount, dateString));
+                                views.setTextViewText(R.id.widget_updated_text, "@" + dateString);
 
                                 String summonerRank = profile.getSoloDuo().getRank().getName() + " - " + profile.getSoloDuo().getLeaguePoints() + " LP"; // TODO: take the highest rank instead of just solo queue
                                 Bitmap summonerRankBitmap = Utils.getFontBitmap(context, summonerRank, Color.WHITE, 14);
@@ -256,7 +250,6 @@ public class Widget extends AppWidgetProvider
         {
             Log.d("asd", "METHOD - ID " + appWidgetId + ": OnDeleted");
 
-            SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.COUNT, appWidgetId);
             SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.REGION_CODE, appWidgetId);
             SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.RANK_IMAGE_RES_ID, appWidgetId);
             SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.SELECTED_COLOR_DRAWABLE_ID, appWidgetId);

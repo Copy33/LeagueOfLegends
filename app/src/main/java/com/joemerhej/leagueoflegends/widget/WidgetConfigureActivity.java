@@ -216,7 +216,7 @@ public class WidgetConfigureActivity extends Activity
             mSummonerNameEditText.setSelection(mSummonerNameEditText.getText().length());
 
             final String dateString = DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date());
-            mPreviewUpdatedTextView.setText(getResources().getString(R.string.date_format, 1, dateString));
+            mPreviewUpdatedTextView.setText("@" + dateString);
 
             mPreviewRankImageImageView.setImageResource(rankImageIdSP);
 
@@ -409,7 +409,7 @@ public class WidgetConfigureActivity extends Activity
 
                                 // update the preview's views
                                 final String dateString = DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date());
-                                mPreviewUpdatedTextView.setText(getResources().getString(R.string.date_format, 1, dateString));
+                                mPreviewUpdatedTextView.setText("@" + dateString);
                                 mPreviewRankImageImageView.setImageResource(rankImageId);
                                 mPreviewRankImageImageView.setVisibility(View.VISIBLE);
 
