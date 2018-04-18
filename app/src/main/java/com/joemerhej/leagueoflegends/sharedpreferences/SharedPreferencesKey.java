@@ -21,7 +21,9 @@ public enum SharedPreferencesKey
     SUMMONER_FLEX_5_HOTSTREAK("sf5h_"),
     SUMMONER_FLEX_3_RANK("sf3r_"),
     SUMMONER_FLEX_3_LP("sf3l_"),
-    SUMMONER_FLEX_3_HOTSTREAK("sf3h_");
+    SUMMONER_FLEX_3_HOTSTREAK("sf3h_"),
+    WIDGET_BACKGROUND_COLOR_ID("wbcid_"),
+    SELECTED_COLOR_DRAWABLE_ID("scdid_");
 
 
     private final String value;

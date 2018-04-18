@@ -7,4 +7,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="black">#FF000000</color>
     <color name="gray">#AAAAAAAA</color>
+
+    <color name="background_white">#AAFFFFFF</color>
+    <color name="background_black">#AA000000</color>
+    <color name="background_gray">#AAAAAAAA</color>
+    <color name="background_transparent">#00000000</color>
 </resources>

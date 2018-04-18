@@ -5,11 +5,13 @@ import android.app.WallpaperManager;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -49,16 +52,23 @@ import java.util.List;
 public class WidgetConfigureActivity extends Activity
 {
     // properties
-    private static final int READ_EXTERNAL_STORAGE_PERMISSION_CODE = 0;
     private int mWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
+    private int mSelectedBackgroundDrawableId;
+    private int mWidgetBackgroundColorId;
     private final Profile mProfile = new Profile();
-    private boolean mIsNewProfile;
+    private boolean mIsNewProfile = false;
+
 
     // views
     private LinearLayout mBackgroundLinearLayout;
     private EditText mSummonerNameEditText;
     private Spinner mRegionSpinner;
     private RegionSpinnerAdapter mRegionSpinnerAdapter;
+    private ImageView mRadioTransparent;
+    private ImageView mRadioWhite;
+    private ImageView mRadioGray;
+    private ImageView mRadioBlack;
+    private RelativeLayout mPreviewBackground;
     private TextView mPreviewUpdatedTextView;
     private ImageView mPreviewRankImageImageView;
     private ImageView mPreviewRankNameImageView;
@@ -100,14 +110,16 @@ public class WidgetConfigureActivity extends Activity
             return;
         }
 
-        // reset the isNewProfile variable
-        mIsNewProfile = false;
-
         // initialize the views
         mBackgroundLinearLayout = findViewById(R.id.activity_layout);
         mSummonerNameEditText = findViewById(R.id.widgetactiviy_summoner_name_text);
         mRegionSpinner = findViewById(R.id.widgetactivity_region_spinner);
         mAddWidgetButton = findViewById(R.id.widgetactivity_add_button);
+        mRadioTransparent = findViewById(R.id.radio_transparent);
+        mRadioWhite = findViewById(R.id.radio_white);
+        mRadioGray = findViewById(R.id.radio_gray);
+        mRadioBlack = findViewById(R.id.radio_black);
+        mPreviewBackground = findViewById(R.id.widgetactivity_preview_background);
         mPreviewUpdatedTextView = findViewById(R.id.widgetactivity_updated_text);
         mPreviewRankImageImageView = findViewById(R.id.widgetactivity_rank_image);
         mPreviewRankNameImageView = findViewById(R.id.widgetactivity_rank_name_text);
@@ -169,6 +181,10 @@ public class WidgetConfigureActivity extends Activity
             }
         });
 
+        // set up background image views (default values)
+        mSelectedBackgroundDrawableId = R.drawable.radio_gray_selected;
+        mWidgetBackgroundColorId = ContextCompat.getColor(this, R.color.background_gray);
+
         // check if summoner name already populated (edit) or not (new widget)
         mSummonerNameEditText.setText(SharedPreferencesManager.readWidgetString(SharedPreferencesKey.SUMMONER_NAME, mWidgetId));
         String summonerName = mSummonerNameEditText.getText().toString();
@@ -182,6 +198,10 @@ public class WidgetConfigureActivity extends Activity
 
             // set the spinner to the right region
             mRegionSpinner.setSelection(mRegionSpinnerAdapter.getRegions().indexOf(mProfile.getRegion()));
+
+            // get the widget properties from shared preferences
+            mSelectedBackgroundDrawableId = SharedPreferencesManager.readWidgetInt(SharedPreferencesKey.SELECTED_COLOR_DRAWABLE_ID, mWidgetId);
+            mWidgetBackgroundColorId = SharedPreferencesManager.readWidgetInt(SharedPreferencesKey.WIDGET_BACKGROUND_COLOR_ID, mWidgetId);
 
             // fill preview data from shared preferences
             mPreviewUpdatedTextView.setText(getResources().getString(R.string.date_format, 1, DateFormat.getTimeInstance(DateFormat.SHORT).format(new Date())));
@@ -210,6 +230,46 @@ public class WidgetConfigureActivity extends Activity
             mAddWidgetButton.setEnabled(true);
         }
 
+        // update color selection and background
+        updateBackgroundSelectionAndApplyWidgetPreviewBackground();
+
+        // color picker button listeners
+        mRadioBlack.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                mSelectedBackgroundDrawableId = R.drawable.radio_black_selected;
+                updateBackgroundSelectionAndApplyWidgetPreviewBackground();
+            }
+        });
+        mRadioGray.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                mSelectedBackgroundDrawableId = R.drawable.radio_gray_selected;
+                updateBackgroundSelectionAndApplyWidgetPreviewBackground();
+            }
+        });
+        mRadioWhite.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                mSelectedBackgroundDrawableId = R.drawable.radio_white_selected;
+                updateBackgroundSelectionAndApplyWidgetPreviewBackground();
+            }
+        });
+        mRadioTransparent.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                mSelectedBackgroundDrawableId = R.drawable.radio_transparent_selected;
+                updateBackgroundSelectionAndApplyWidgetPreviewBackground();
+            }
+        });
         // keyboard search button listener
         mSummonerNameEditText.setOnEditorActionListener(new TextView.OnEditorActionListener()
         {
@@ -251,7 +311,7 @@ public class WidgetConfigureActivity extends Activity
             @Override
             public void onClick(View view)
             {
-                // if it's a new/edited profile save new data to shared preferences
+                // if it's a new profile save new data to shared preferences
                 if(mIsNewProfile)
                 {
                     mIsNewProfile = false;
@@ -278,6 +338,10 @@ public class WidgetConfigureActivity extends Activity
                     SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_FLEX_3_LP, mWidgetId, mProfile.getFlex3().getLeaguePoints());
                     SharedPreferencesManager.writeWidgetBoolean(SharedPreferencesKey.SUMMONER_FLEX_3_HOTSTREAK, mWidgetId, mProfile.getFlex3().getHotStreak());
                 }
+
+                // save the new widget background
+                SharedPreferencesManager.writeWidgetInt(SharedPreferencesKey.SELECTED_COLOR_DRAWABLE_ID, mWidgetId, mSelectedBackgroundDrawableId);
+                SharedPreferencesManager.writeWidgetInt(SharedPreferencesKey.WIDGET_BACKGROUND_COLOR_ID, mWidgetId, mWidgetBackgroundColorId);
 
                 // it is the responsibility of the configuration activity to update the app widget
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
@@ -398,6 +462,42 @@ public class WidgetConfigureActivity extends Activity
         mPreviewRankNameImageView.setImageBitmap(rankNameBitmap);
         Bitmap summonerNameBitmap = Utils.getFontBitmap(WidgetConfigureActivity.this, " ", Color.WHITE, 24);
         mPreviewSummonerNameImageView.setImageBitmap(summonerNameBitmap);
+    }
+
+    private void updateBackgroundSelectionAndApplyWidgetPreviewBackground()
+    {
+        // reset the views
+        mRadioBlack.setImageResource(R.drawable.radio_black);
+        mRadioGray.setImageResource(R.drawable.radio_gray);
+        mRadioWhite.setImageResource(R.drawable.radio_white);
+        mRadioTransparent.setImageResource(R.drawable.radio_transparent);
+
+        // change the selected view
+        switch(mSelectedBackgroundDrawableId)
+        {
+            case R.drawable.radio_black_selected:
+                mRadioBlack.setImageResource(mSelectedBackgroundDrawableId);
+                mWidgetBackgroundColorId = ContextCompat.getColor(this, R.color.background_black);
+                break;
+            case R.drawable.radio_gray_selected:
+                mRadioGray.setImageResource(mSelectedBackgroundDrawableId);
+                mWidgetBackgroundColorId = ContextCompat.getColor(this, R.color.background_gray);
+                break;
+            case R.drawable.radio_white_selected:
+                mRadioWhite.setImageResource(mSelectedBackgroundDrawableId);
+                mWidgetBackgroundColorId = ContextCompat.getColor(this, R.color.background_white);
+                break;
+            case R.drawable.radio_transparent_selected:
+                mRadioTransparent.setImageResource(mSelectedBackgroundDrawableId);
+                mWidgetBackgroundColorId = ContextCompat.getColor(this, R.color.background_transparent);
+                break;
+            default:
+                mRadioGray.setImageResource(mSelectedBackgroundDrawableId);
+                mWidgetBackgroundColorId = ContextCompat.getColor(this, R.color.background_gray);
+                break;
+        }
+
+        mPreviewBackground.setBackgroundColor(mWidgetBackgroundColorId);
     }
 }
 

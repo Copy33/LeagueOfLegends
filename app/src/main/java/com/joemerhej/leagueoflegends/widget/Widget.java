@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -55,6 +56,7 @@ public class Widget extends AppWidgetProvider
             return;
 
         final String regionCodeSP = SharedPreferencesManager.readWidgetString(SharedPreferencesKey.REGION_CODE, appWidgetId);
+        final int colorId = SharedPreferencesManager.readWidgetInt(SharedPreferencesKey.WIDGET_BACKGROUND_COLOR_ID, appWidgetId);
         final String soloDuoRankSP = SharedPreferencesManager.readWidgetString(SharedPreferencesKey.SUMMONER_SOLO_DUO_RANK, appWidgetId); // TODO: take the highest rank instead of just solo queue
         final Long leaguePointsSP = SharedPreferencesManager.readWidgetLong(SharedPreferencesKey.SUMMONER_SOLO_DUO_LP, appWidgetId);    // also TODO: maybe use these values to check new vs. old?
         final int rankImageIdSP = SharedPreferencesManager.readWidgetInt(SharedPreferencesKey.RANK_IMAGE_RES_ID, appWidgetId);
@@ -130,6 +132,7 @@ public class Widget extends AppWidgetProvider
                                 // get the widget's views and update them with the new data
                                 RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
 
+                                views.setInt(R.id.widget_background, "setBackgroundColor", colorId);
                                 views.setTextViewText(R.id.widget_updated_text, context.getResources().getString(R.string.date_format, widgetCount, dateString));
 
                                 String summonerRank = profile.getSoloDuo().getRank().getName() + " - " + profile.getSoloDuo().getLeaguePoints() + " LP"; // TODO: take the highest rank instead of just solo queue
@@ -252,6 +255,8 @@ public class Widget extends AppWidgetProvider
             SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.COUNT, appWidgetId);
             SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.REGION_CODE, appWidgetId);
             SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.RANK_IMAGE_RES_ID, appWidgetId);
+            SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.SELECTED_COLOR_DRAWABLE_ID, appWidgetId);
+            SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.WIDGET_BACKGROUND_COLOR_ID, appWidgetId);
             SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.SUMMONER_NAME, appWidgetId);
             SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.SUMMONER_ID, appWidgetId);
             SharedPreferencesManager.removeWidgetPreference(SharedPreferencesKey.SUMMONER_ICON_ID, appWidgetId);

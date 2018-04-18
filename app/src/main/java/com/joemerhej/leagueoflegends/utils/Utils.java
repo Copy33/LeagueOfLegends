@@ -3,6 +3,7 @@ package com.joemerhej.leagueoflegends.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.support.v4.content.res.ResourcesCompat;
@@ -52,7 +53,7 @@ public final class Utils
 
     public static String getApiKey()
     {
-        return "RGAPI-143b7936-1f8e-4565-b245-32ccbc6f6f8e";
+        return "RGAPI-9394dc54-fc95-40df-8b1e-1ad02629f662";
     }
 
     public static Region getRegionFromCode(RegionCode regionCode)
@@ -88,4 +89,33 @@ public final class Utils
         }
     }
 
+    public static int getColorIdFromSelectedRadioImageDrawableId(int selectedRadioImageDrawableId)
+    {
+        switch(selectedRadioImageDrawableId)
+        {
+            case R.drawable.radio_black_selected:
+                return R.color.background_black;
+            case R.drawable.radio_gray_selected:
+                return R.color.background_gray;
+            case R.drawable.radio_white_selected:
+                return R.color.background_white;
+            case R.drawable.radio_transparent_selected:
+                return R.color.background_transparent;
+            default:
+                return R.color.background_gray;
+        }
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
