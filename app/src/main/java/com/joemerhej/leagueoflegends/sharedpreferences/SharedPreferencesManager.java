@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.joemerhej.leagueoflegends.enums.QueueType;
-import com.joemerhej.leagueoflegends.models.Profile;
-import com.joemerhej.leagueoflegends.models.QueueRank;
 import com.joemerhej.leagueoflegends.models.WidgetListItem;
 
 import java.util.ArrayList;
@@ -100,6 +97,11 @@ public class SharedPreferencesManager
     {
         SharedPreferences.Editor prefsEditor = mSharedPref.edit();
         prefsEditor.remove(WIDGET_KEY_PREFIX + key.getValue() + widgetId).apply();
+    }
+
+    public static void clearSharedPreferences()
+    {
+        mSharedPref.edit().clear().apply();
     }
 
     public static void readWidgetListItems(List<WidgetListItem> items)

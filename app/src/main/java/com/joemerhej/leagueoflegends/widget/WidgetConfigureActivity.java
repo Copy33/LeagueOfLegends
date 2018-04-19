@@ -55,11 +55,12 @@ public class WidgetConfigureActivity extends Activity
 {
     // properties
     private int mWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
+    private int mRankSP = 12;
+    private int mSummonerNameSP = 20;
     private int mSelectedBackgroundDrawableId;
     private int mWidgetBackgroundColorId;
     private final Profile mProfile = new Profile();
     private boolean mIsNewProfile = false;
-
 
     // views
     private LinearLayout mBackgroundLinearLayout;
@@ -234,10 +235,10 @@ public class WidgetConfigureActivity extends Activity
 
             Context context = getApplicationContext();
             String summonerRank = soloDuoRankSP + " - " + leaguePointsSP + " LP"; // TODO: take the highest rank instead of just solo queue
-            Bitmap summonerRankBitmap = Utils.getFontBitmap(context, summonerRank, Color.WHITE, 14);
+            Bitmap summonerRankBitmap = Utils.getFontBitmap(context, summonerRank, Color.WHITE, mRankSP);
             mPreviewRankNameImageView.setImageBitmap(summonerRankBitmap);
 
-            Bitmap summonerNameBitmap = Utils.getFontBitmap(context, summonerName, Color.WHITE, 24);
+            Bitmap summonerNameBitmap = Utils.getFontBitmap(context, summonerName, Color.WHITE, mSummonerNameSP);
             mPreviewSummonerNameImageView.setImageBitmap(summonerNameBitmap);
 
             mAddWidgetButton.setEnabled(true);
@@ -435,10 +436,10 @@ public class WidgetConfigureActivity extends Activity
 
                                 Context context = getApplicationContext();
                                 String summonerRank = mProfile.getSoloDuo().getRank().getName() + " - " + mProfile.getSoloDuo().getLeaguePoints() + " LP"; // TODO: take the highest rank instead of just solo queue
-                                Bitmap summonerRankBitmap = Utils.getFontBitmap(context, summonerRank, Color.WHITE, 14);
+                                Bitmap summonerRankBitmap = Utils.getFontBitmap(context, summonerRank, Color.WHITE, mRankSP);
                                 mPreviewRankNameImageView.setImageBitmap(summonerRankBitmap);
 
-                                Bitmap summonerNameBitmap = Utils.getFontBitmap(context, mProfile.getSummonerName(), Color.WHITE, 24);
+                                Bitmap summonerNameBitmap = Utils.getFontBitmap(context, mProfile.getSummonerName(), Color.WHITE, mSummonerNameSP);
                                 mPreviewSummonerNameImageView.setImageBitmap(summonerNameBitmap);
 
                                 mAddWidgetButton.setEnabled(true);
@@ -486,9 +487,9 @@ public class WidgetConfigureActivity extends Activity
         mAddWidgetButton.setEnabled(false);
 
         mPreviewRankImageImageView.setVisibility(View.INVISIBLE);
-        Bitmap rankNameBitmap = Utils.getFontBitmap(WidgetConfigureActivity.this, " ", Color.WHITE, 24);
+        Bitmap rankNameBitmap = Utils.getFontBitmap(WidgetConfigureActivity.this, " ", Color.WHITE, mRankSP);
         mPreviewRankNameImageView.setImageBitmap(rankNameBitmap);
-        Bitmap summonerNameBitmap = Utils.getFontBitmap(WidgetConfigureActivity.this, " ", Color.WHITE, 24);
+        Bitmap summonerNameBitmap = Utils.getFontBitmap(WidgetConfigureActivity.this, " ", Color.WHITE, mSummonerNameSP);
         mPreviewSummonerNameImageView.setImageBitmap(summonerNameBitmap);
     }
 

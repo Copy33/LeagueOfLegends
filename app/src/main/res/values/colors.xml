@@ -8,9 +8,9 @@
     <color name="black">#FF000000</color>
     <color name="gray">#FFAAAAAA</color>
 
-    <color name="background_white">#AAFFFFFF</color>
-    <color name="background_black">#AA000000</color>
-    <color name="background_gray">#AAAAAAAA</color>
+    <color name="background_white">#55FFFFFF</color>
+    <color name="background_black">#55000000</color>
+    <color name="background_gray">#55AAAAAA</color>
     <color name="background_transparent">#00000000</color>
 
     <color name="colorPrimary">#607D8B</color>

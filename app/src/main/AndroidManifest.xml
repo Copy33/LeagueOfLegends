@@ -13,7 +13,10 @@
         android:theme="@style/AppTheme">
 
         <!-- App main activity -->
-        <activity android:name=".activities.MainActivity">
+        <activity
+            android:name=".activities.MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -35,13 +38,24 @@
         </receiver>
 
         <!-- Widget configure activity -->
-        <activity android:name=".widget.WidgetConfigureActivity"
+        <activity
+            android:name=".widget.WidgetConfigureActivity"
             android:launchMode="singleInstance"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
             </intent-filter>
         </activity>
+
+        <!-- Info activity -->
+        <activity android:name=".activities.InfoActivity"
+                  android:label="@string/app_info"
+                  android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity" />
+        </activity>
+
     </application>
 
 </manifest>
