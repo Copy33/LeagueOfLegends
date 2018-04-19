@@ -7,8 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.RemoteViews;
 
 import com.joemerhej.leagueoflegends.R;
@@ -36,6 +38,10 @@ public class Widget extends AppWidgetProvider
 {
     static void updateWidget(final Context context, final AppWidgetManager appWidgetManager, final int appWidgetId)
     {
+        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
+        views.setViewVisibility(R.id.widget_preview_loading, View.VISIBLE);
+        appWidgetManager.updateAppWidget(appWidgetId, views);
+
         Log.d("asd", "METHOD - ID " + appWidgetId + ": UpdateWidget");
 
         // create a profile for convenience
@@ -72,6 +78,9 @@ public class Widget extends AppWidgetProvider
                         @Override
                         public void onResponse(List<RankedData> response, Error error)
                         {
+                            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
+                            views.setViewVisibility(R.id.widget_preview_loading, View.GONE);
+
                             if(response != null && error == null)
                             {
                                 // empty response here means the account is unranked
@@ -123,9 +132,6 @@ public class Widget extends AppWidgetProvider
                                 SharedPreferencesManager.writeWidgetLong(SharedPreferencesKey.SUMMONER_FLEX_3_LP, appWidgetId, profile.getFlex3().getLeaguePoints());
                                 SharedPreferencesManager.writeWidgetBoolean(SharedPreferencesKey.SUMMONER_FLEX_3_HOTSTREAK, appWidgetId, profile.getFlex3().getHotStreak());
 
-                                // get the widget's views and update them with the new data
-                                RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
-
                                 views.setInt(R.id.widget_background, "setBackgroundColor", colorId);
                                 views.setTextViewText(R.id.widget_updated_text, "@" + dateString);
 
@@ -168,6 +174,9 @@ public class Widget extends AppWidgetProvider
                             }
                             else if(error != null)
                             {
+                                views = new RemoteViews(context.getPackageName(), R.layout.widget);
+                                views.setViewVisibility(R.id.widget_preview_loading, View.GONE);
+                                appWidgetManager.updateAppWidget(appWidgetId, views);
                                 //TODO: What to do when there's a server error in the widget
                                 Log.e("asd", "WIDGET ERROR 1 - " + error.getCode());
                             }
@@ -176,6 +185,9 @@ public class Widget extends AppWidgetProvider
                         @Override
                         public void onFailure(Error error)
                         {
+                            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
+                            views.setViewVisibility(R.id.widget_preview_loading, View.GONE);
+                            appWidgetManager.updateAppWidget(appWidgetId, views);
                             //TODO: What to do when there's a server error in the widget
                             Log.e("asd", "WIDGET ERROR 2 - " + error.getCode());
                         }
@@ -183,6 +195,9 @@ public class Widget extends AppWidgetProvider
                 }
                 else
                 {
+                    RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
+                    views.setViewVisibility(R.id.widget_preview_loading, View.GONE);
+                    appWidgetManager.updateAppWidget(appWidgetId, views);
                     //TODO: What to do when there's a server error in the widget
                     Log.e("asd", "WIDGET ERROR 3 - " + error.getCode());
                 }
@@ -191,6 +206,9 @@ public class Widget extends AppWidgetProvider
             @Override
             public void onFailure(Error error)
             {
+                RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
+                views.setViewVisibility(R.id.widget_preview_loading, View.GONE);
+                appWidgetManager.updateAppWidget(appWidgetId, views);
                 //TODO: What to do when there's a server error in the widget
                 Log.e("asd", "WIDGET ERROR 4 - " + error.getCode());
             }
@@ -236,6 +254,11 @@ public class Widget extends AppWidgetProvider
 
             // call update widget
             AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+
+//            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
+//            views.setViewVisibility(R.id.widget_preview_loading, View.VISIBLE);
+            //appWidgetManager.updateAppWidget(widgetId, views);
+
             Widget.updateWidget(context, appWidgetManager, widgetId);
         }
 

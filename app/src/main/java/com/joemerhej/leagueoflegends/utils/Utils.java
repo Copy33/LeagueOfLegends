@@ -53,7 +53,7 @@ public final class Utils
 
     public static String getApiKey()
     {
-        return "RGAPI-9394dc54-fc95-40df-8b1e-1ad02629f662";
+        return "RGAPI-397d7ed9-f085-461a-9a63-e45b8c6b592d";
     }
 
     public static Region getRegionFromCode(RegionCode regionCode)

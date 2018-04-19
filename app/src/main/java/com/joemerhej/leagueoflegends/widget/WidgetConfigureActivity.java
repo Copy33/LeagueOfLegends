@@ -72,6 +72,7 @@ public class WidgetConfigureActivity extends Activity
     private ImageView mRadioBlack;
     private RelativeLayout mPreviewBackground;
     private TextView mPreviewUpdatedTextView;
+    private RelativeLayout mPreviewLoading;
     private ImageView mPreviewRankImageImageView;
     private ImageView mPreviewRankNameImageView;
     private ImageView mPreviewSummonerNameImageView;
@@ -126,6 +127,9 @@ public class WidgetConfigureActivity extends Activity
         mPreviewRankImageImageView = findViewById(R.id.widgetactivity_rank_image);
         mPreviewRankNameImageView = findViewById(R.id.widgetactivity_rank_name_text);
         mPreviewSummonerNameImageView = findViewById(R.id.widgetactivity_summoner_name_text);
+        mPreviewLoading = findViewById(R.id.widgetactivity_preview_loading);
+
+        mPreviewLoading.setVisibility(View.GONE);
 
         // set up activity wallpaper
         if(Build.VERSION.SDK_INT < 26)
@@ -359,6 +363,9 @@ public class WidgetConfigureActivity extends Activity
     // makes a summoner request and populates the preview with new data
     void populatePreviewWithNewData(String summonerName)
     {
+        // show the progress bar
+        mPreviewLoading.setVisibility(View.VISIBLE);
+
         // make the request to fetch new data
         final Region selectedRegion = mRegionSpinnerAdapter.getRegions().get(mRegionSpinner.getSelectedItemPosition());
         final SummonerRequest summonerRequest = new SummonerRequest(selectedRegion.getCode());
@@ -377,6 +384,9 @@ public class WidgetConfigureActivity extends Activity
                         @Override
                         public void onResponse(List<RankedData> response, Error error)
                         {
+                            // hide the progress bar
+                            mPreviewLoading.setVisibility(View.GONE);
+
                             if(response != null && error == null)
                             {
                                 // empty response here means the account is unranked
@@ -426,6 +436,8 @@ public class WidgetConfigureActivity extends Activity
                             }
                             else if(error != null)
                             {
+                                // hide the progress bar
+                                mPreviewLoading.setVisibility(View.GONE);
                                 showErrorDialog(error);
                             }
                         }
@@ -433,12 +445,16 @@ public class WidgetConfigureActivity extends Activity
                         @Override
                         public void onFailure(Error error)
                         {
+                            // hide the progress bar
+                            mPreviewLoading.setVisibility(View.GONE);
                             showErrorDialog(error);
                         }
                     });
                 }
                 else
                 {
+                    // hide the progress bar
+                    mPreviewLoading.setVisibility(View.GONE);
                     showErrorDialog(error);
                 }
             }
@@ -446,6 +462,8 @@ public class WidgetConfigureActivity extends Activity
             @Override
             public void onFailure(Error error)
             {
+                // hide the progress bar
+                mPreviewLoading.setVisibility(View.GONE);
                 showErrorDialog(error);
             }
         });
@@ -514,8 +532,8 @@ public class WidgetConfigureActivity extends Activity
                 message = "Something went wrong, please try again.";
                 break;
             case NO_INTERNET:
-                title = "No Internet Connection";
-                message = "Please connect to the internet and try again. It's the 21st century and there are still places where a person can't get a reliable internet connection, shame.";
+                title = "Invalid Internet Connection";
+                message = "This device is either not connected to the internet or Riot isn't allowing this connection to reach their servers. Please connect to a reliable source and try again.";
                 break;
             case INVALID_SUMMONER_NAME:
                 title = "Invalid Summoner Name";
@@ -535,7 +553,7 @@ public class WidgetConfigureActivity extends Activity
                 break;
             case NOT_FOUND:
                 title = "Summoner Not Found";
-                message = "Summoner " + mSummonerNameEditText.getText().toString() + " not found in " + mProfile.getRegion().getName() + "! do you have the right region selected? maybe a typo in the summoner name? try again.";
+                message = "Summoner " + mSummonerNameEditText.getText().toString() + " not found in " + mProfile.getRegion().getName() + ". Do you have the right region selected? maybe a typo in the summoner name? try again.";
                 break;
             case LIMIT_EXCEEDED:
                 title = "Huge Call Volume";

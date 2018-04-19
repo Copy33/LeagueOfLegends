@@ -39,7 +39,6 @@
             android:contentDescription="@string/acc_refresh_button"
             android:padding="6dp"
             android:src="@drawable/button_refresh"/>
-
     </LinearLayout>
 
     <ImageView
@@ -49,6 +48,18 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:contentDescription="@string/acc_rank_image_name"/>
+
+    <RelativeLayout
+        android:id="@+id/widget_preview_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:visibility="gone">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
