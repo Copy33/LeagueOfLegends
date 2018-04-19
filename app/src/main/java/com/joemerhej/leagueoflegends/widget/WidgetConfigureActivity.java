@@ -365,9 +365,15 @@ public class WidgetConfigureActivity extends Activity
                 Intent resultValue = new Intent();
                 resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mWidgetId);
                 setResult(RESULT_OK, resultValue);
-                finish();
+                finishAndRemoveTask();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        finishAndRemoveTask();
     }
 
     // makes a summoner request and populates the preview with new data

@@ -9,14 +9,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.joemerhej.leagueoflegends.R;
+import com.joemerhej.leagueoflegends.sharedpreferences.SharedPreferencesManager;
 
 public class InfoActivity extends AppCompatActivity
 {
     // views
     private TextView mDescription;
 
+    // special button counter
+    private static int mCounter = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -24,7 +28,7 @@ public class InfoActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info);
 
-
+        // set up the toolbar and action bar back button
         Toolbar toolbar = findViewById(R.id.infoactivity_toolbar);
         setSupportActionBar(toolbar);
 
@@ -44,7 +48,7 @@ public class InfoActivity extends AppCompatActivity
             }
         });
 
-
+        // get the package info
         PackageInfo pInfo = null;
         try
         {
@@ -63,5 +67,16 @@ public class InfoActivity extends AppCompatActivity
         String description = getString(R.string.infoactivity_description, version, appName);
 
         mDescription.setText(description);
+    }
+
+    // click listener for special button
+    public void ClearSharedPReferences(View view)
+    {
+        if(--mCounter <= 0)
+        {
+            mCounter = 10;
+            SharedPreferencesManager.clearSharedPreferences();
+            Toast.makeText(this, "Cleared League Badge Data, please remove your widgets and try again.", Toast.LENGTH_SHORT).show();
+        }
     }
 }
