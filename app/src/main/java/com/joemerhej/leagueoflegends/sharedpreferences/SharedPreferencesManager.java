@@ -2,6 +2,16 @@ package com.joemerhej.leagueoflegends.sharedpreferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
+
+import com.joemerhej.leagueoflegends.enums.QueueType;
+import com.joemerhej.leagueoflegends.models.Profile;
+import com.joemerhej.leagueoflegends.models.QueueRank;
+import com.joemerhej.leagueoflegends.models.WidgetListItem;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Joe Merhej on 4/14/18.
@@ -90,6 +100,41 @@ public class SharedPreferencesManager
     {
         SharedPreferences.Editor prefsEditor = mSharedPref.edit();
         prefsEditor.remove(WIDGET_KEY_PREFIX + key.getValue() + widgetId).apply();
+    }
+
+    public static void readWidgetListItems(List<WidgetListItem> items)
+    {
+        if(items == null)
+            return;
+
+        items.clear();
+
+        List<Integer> allWidgetIds = new ArrayList<>();
+
+        // loop through all shared preferences
+        Map<String, ?> allEntries = mSharedPref.getAll();
+        for(Map.Entry<String, ?> entry : allEntries.entrySet())
+        {
+            Log.d("map values", entry.getKey() + ": " + entry.getValue().toString());
+
+            String key = entry.getKey();
+
+            String[] splits = key.split("_");
+            String widgetIdNum = splits[splits.length - 1];
+            int widgetId = Integer.parseInt(widgetIdNum);
+
+            if(!allWidgetIds.contains(widgetId))
+            {
+                allWidgetIds.add(widgetId);
+
+                WidgetListItem widgetListItem = new WidgetListItem();
+                widgetListItem.setWidgetId(widgetId);
+                widgetListItem.setSummonerName(SharedPreferencesManager.readWidgetString(SharedPreferencesKey.SUMMONER_NAME, widgetId));
+                widgetListItem.setRankImageId(SharedPreferencesManager.readWidgetInt(SharedPreferencesKey.RANK_IMAGE_RES_ID, widgetId));
+
+                items.add(widgetListItem);
+            }
+        }
     }
 }
 

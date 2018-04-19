@@ -6,7 +6,8 @@ package com.joemerhej.leagueoflegends.sharedpreferences;
 
 public enum SharedPreferencesKey
 {
-    RANK_IMAGE_RES_ID("riri"),
+    // IMPORTANT, the strings shouldn't be concatative, because when reading profiles from shared preferences we are searching for string value in shared preferences key
+    RANK_IMAGE_RES_ID("riri_"),
     REGION_CODE("rc_"),
     SUMMONER_NAME("sn_"),
     SUMMONER_ID("sid_"),
