@@ -28,8 +28,7 @@
     <string name="region_spinner_title">Region</string>
     <string name="region_spinner_name">Region</string>
 
-    <!-- External storage read permission dialog -->
-    <string name="read_external_storage_permission_dialog_title">Wallpaper Access Permission</string>
-    <string name="read_external_storage_permission_dialog_message">I will tell you why I need the wallpaper here</string>
-
+    <!-- Main activity strings -->
+    <string name="mainactivity_nowidgets_title">No Widgets</string>
+    <string name="mainactivity_nowidgets_description">To add a widget please long press on your home screen. If the app isn\'t showing on the Widgets list, please restart your device once.</string>
 </resources>

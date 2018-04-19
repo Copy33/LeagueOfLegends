@@ -47,9 +47,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:textColor="@color/colorTextPrimary"
                     android:labelFor="@+id/widgetactiviy_summoner_name_text"
-                    android:text="@string/widgetactivity_summoner_name_label"/>
+                    android:text="@string/widgetactivity_summoner_name_label"
+                    android:textColor="@color/colorTextPrimary"/>
 
                 <EditText
                     android:id="@+id/widgetactiviy_summoner_name_text"
@@ -88,16 +88,16 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textColor="@color/colorTextPrimary"
-                android:text="@string/widgetactivity_refresh_interval_label"/>
+                android:text="@string/widgetactivity_refresh_interval_label"
+                android:textColor="@color/colorTextPrimary"/>
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="end"
-                android:textColor="@color/colorTextSecondary"
-                android:text="@string/widgetactivity_refresh_interval_value"/>
+                android:text="@string/widgetactivity_refresh_interval_value"
+                android:textColor="@color/colorTextSecondary"/>
         </LinearLayout>
 
         <LinearLayout
@@ -114,50 +114,83 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_gravity="center"
-                android:textColor="@color/colorTextPrimary"
-                android:text="@string/widgetactivity_background_color_label"
+                android:layout_weight="1"
+                android:paddingEnd="16dp"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp"/>
+                android:text="@string/widgetactivity_background_color_label"
+                android:textColor="@color/colorTextPrimary"/>
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
-                android:gravity="end">
+                android:gravity="end"
+                android:orientation="horizontal">
 
-                <ImageView
-                    android:id="@+id/radio_transparent"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:contentDescription="@string/acc_radio_transparent"
-                    android:src="@drawable/radio_transparent"
-                    android:layout_margin="16dp"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/radio_transparent">
 
-                <ImageView
-                    android:id="@+id/radio_white"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:contentDescription="@string/acc_radio_white"
-                    android:layout_margin="16dp"
-                    android:src="@drawable/radio_white"/>
+                    <ImageView
+                        android:id="@+id/radio_transparent_image"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_margin="16dp"
+                        android:contentDescription="@string/acc_radio_transparent"
+                        android:src="@drawable/radio_transparent"/>
+                </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/radio_gray"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_margin="16dp"
-                    android:contentDescription="@string/acc_radio_gray"
-                    android:src="@drawable/radio_gray"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/radio_white">
 
-                <ImageView
-                    android:id="@+id/radio_black"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_margin="16dp"
-                    android:contentDescription="@string/acc_radio_black"
-                    android:src="@drawable/radio_black"/>
+                    <ImageView
+                        android:id="@+id/radio_white_image"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_margin="16dp"
+                        android:contentDescription="@string/acc_radio_white"
+                        android:src="@drawable/radio_white"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/radio_gray">
+
+                    <ImageView
+                        android:id="@+id/radio_gray_image"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_margin="16dp"
+                        android:contentDescription="@string/acc_radio_gray"
+                        android:src="@drawable/radio_gray"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:id="@+id/radio_black">
+
+                    <ImageView
+                        android:id="@+id/radio_black_image"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_margin="16dp"
+                        android:contentDescription="@string/acc_radio_black"
+                        android:src="@drawable/radio_black"/>
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -228,10 +261,11 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:visibility="gone">
+
             <ProgressBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:indeterminate="true" />
+                android:indeterminate="true"/>
         </RelativeLayout>
 
         <LinearLayout

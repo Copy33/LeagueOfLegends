@@ -66,10 +66,14 @@ public class WidgetConfigureActivity extends Activity
     private EditText mSummonerNameEditText;
     private Spinner mRegionSpinner;
     private RegionSpinnerAdapter mRegionSpinnerAdapter;
-    private ImageView mRadioTransparent;
-    private ImageView mRadioWhite;
-    private ImageView mRadioGray;
-    private ImageView mRadioBlack;
+    private LinearLayout mRadioTransparent;
+    private ImageView mRadioTransparentImage;
+    private LinearLayout mRadioWhite;
+    private ImageView mRadioWhiteImage;
+    private LinearLayout mRadioGray;
+    private ImageView mRadioGrayImage;
+    private LinearLayout mRadioBlack;
+    private ImageView mRadioBlackImage;
     private RelativeLayout mPreviewBackground;
     private TextView mPreviewUpdatedTextView;
     private RelativeLayout mPreviewLoading;
@@ -119,9 +123,13 @@ public class WidgetConfigureActivity extends Activity
         mRegionSpinner = findViewById(R.id.widgetactivity_region_spinner);
         mAddWidgetButton = findViewById(R.id.widgetactivity_add_button);
         mRadioTransparent = findViewById(R.id.radio_transparent);
+        mRadioTransparentImage = findViewById(R.id.radio_transparent_image);
         mRadioWhite = findViewById(R.id.radio_white);
+        mRadioWhiteImage = findViewById(R.id.radio_white_image);
         mRadioGray = findViewById(R.id.radio_gray);
+        mRadioGrayImage = findViewById(R.id.radio_gray_image);
         mRadioBlack = findViewById(R.id.radio_black);
+        mRadioBlackImage = findViewById(R.id.radio_black_image);
         mPreviewBackground = findViewById(R.id.widgetactivity_preview_background);
         mPreviewUpdatedTextView = findViewById(R.id.widgetactivity_updated_text);
         mPreviewRankImageImageView = findViewById(R.id.widgetactivity_rank_image);
@@ -275,6 +283,7 @@ public class WidgetConfigureActivity extends Activity
                 updateBackgroundSelectionAndApplyWidgetPreviewBackground();
             }
         });
+
         // keyboard search button listener
         mSummonerNameEditText.setOnEditorActionListener(new TextView.OnEditorActionListener()
         {
@@ -365,6 +374,7 @@ public class WidgetConfigureActivity extends Activity
     {
         // show the progress bar
         mPreviewLoading.setVisibility(View.VISIBLE);
+        mAddWidgetButton.setEnabled(false);
 
         // make the request to fetch new data
         final Region selectedRegion = mRegionSpinnerAdapter.getRegions().get(mRegionSpinner.getSelectedItemPosition());
@@ -485,32 +495,32 @@ public class WidgetConfigureActivity extends Activity
     private void updateBackgroundSelectionAndApplyWidgetPreviewBackground()
     {
         // reset the views
-        mRadioBlack.setImageResource(R.drawable.radio_black);
-        mRadioGray.setImageResource(R.drawable.radio_gray);
-        mRadioWhite.setImageResource(R.drawable.radio_white);
-        mRadioTransparent.setImageResource(R.drawable.radio_transparent);
+        mRadioBlackImage.setImageResource(R.drawable.radio_black);
+        mRadioGrayImage.setImageResource(R.drawable.radio_gray);
+        mRadioWhiteImage.setImageResource(R.drawable.radio_white);
+        mRadioTransparentImage.setImageResource(R.drawable.radio_transparent);
 
         // change the selected view
         switch(mSelectedBackgroundDrawableId)
         {
             case R.drawable.radio_black_selected:
-                mRadioBlack.setImageResource(mSelectedBackgroundDrawableId);
+                mRadioBlackImage.setImageResource(mSelectedBackgroundDrawableId);
                 mWidgetBackgroundColorId = ContextCompat.getColor(this, R.color.background_black);
                 break;
             case R.drawable.radio_gray_selected:
-                mRadioGray.setImageResource(mSelectedBackgroundDrawableId);
+                mRadioGrayImage.setImageResource(mSelectedBackgroundDrawableId);
                 mWidgetBackgroundColorId = ContextCompat.getColor(this, R.color.background_gray);
                 break;
             case R.drawable.radio_white_selected:
-                mRadioWhite.setImageResource(mSelectedBackgroundDrawableId);
+                mRadioWhiteImage.setImageResource(mSelectedBackgroundDrawableId);
                 mWidgetBackgroundColorId = ContextCompat.getColor(this, R.color.background_white);
                 break;
             case R.drawable.radio_transparent_selected:
-                mRadioTransparent.setImageResource(mSelectedBackgroundDrawableId);
+                mRadioTransparentImage.setImageResource(mSelectedBackgroundDrawableId);
                 mWidgetBackgroundColorId = ContextCompat.getColor(this, R.color.background_transparent);
                 break;
             default:
-                mRadioGray.setImageResource(mSelectedBackgroundDrawableId);
+                mRadioGrayImage.setImageResource(mSelectedBackgroundDrawableId);
                 mWidgetBackgroundColorId = ContextCompat.getColor(this, R.color.background_gray);
                 break;
         }
