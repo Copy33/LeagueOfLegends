@@ -22,6 +22,7 @@
         android:gravity="center"
         android:paddingEnd="16dp"
         android:paddingStart="16dp"
+        android:fontFamily="@font/myfontbold"
         android:text="Mojojo"
         android:textColor="@color/colorTextPrimary"
         android:textSize="20sp"/>

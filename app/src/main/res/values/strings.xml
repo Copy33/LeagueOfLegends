@@ -36,6 +36,6 @@
     <string name="mainactivity_nowidgets_description">To add a widget please long press on your home screen. If the app isn\'t showing on the Widgets list, please restart your device once.</string>
 
     <!-- Info activity strings -->
-    <string name="infoactivity_description">Version %1$s\n\nThank you for using %2$s.\n For any feedback or questions, please contact us at leaguebadge\@gmail.com\n\nDon\'t forget to rate us on the app store!\n\nHappy climbing!</string>
+    <string name="infoactivity_description">Version %1$s\n\nThank you for using %2$s.\n For any feedback or questions, please contact us at leaguebadge\@gmail.com\n\nDon\'t forget to rate us on the app store!\n\nHappy Climbing!</string>
     <string name="title_activity_asdfasdf">asdfasdf</string>
 </resources>

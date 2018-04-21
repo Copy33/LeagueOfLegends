@@ -19,7 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay"/>
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:titleTextAppearance="@style/ActionBarTitle"/>
 
     </android.support.design.widget.AppBarLayout>
 
@@ -40,6 +41,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="24dp"
+            android:fontFamily="@font/cabinregular"
             android:text="@string/infoactivity_description"
             android:textAllCaps="false"
             android:textSize="16sp"/>
