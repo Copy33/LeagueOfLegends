@@ -3,7 +3,6 @@ package com.joemerhej.leagueoflegends.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.support.v4.content.res.ResourcesCompat;
@@ -53,7 +52,7 @@ public final class Utils
 
     public static String getApiKey()
     {
-        return "RGAPI-397d7ed9-f085-461a-9a63-e45b8c6b592d";
+        return "RGAPI-73c4015b-d970-41ed-9323-d18bda55f00a";
     }
 
     public static Region getRegionFromCode(RegionCode regionCode)
