@@ -50,11 +50,6 @@ public final class Utils
         return value;
     }
 
-    public static String getApiKey()
-    {
-        return "RGAPI-73c4015b-d970-41ed-9323-d18bda55f00a";
-    }
-
     public static Region getRegionFromCode(RegionCode regionCode)
     {
         switch(regionCode)

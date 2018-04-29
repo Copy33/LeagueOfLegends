@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -63,7 +62,7 @@ public class Widget extends AppWidgetProvider
 
         // make the request to fetch new data
         final SummonerRequest summonerRequest = new SummonerRequest(RegionCode.from(regionCodeSP));
-        summonerRequest.getSummoner(summonerNameSP, Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<Summoner>()
+        summonerRequest.getSummoner(summonerNameSP, new SummonerRequest.SummonerResponseCallback<Summoner>()
         {
             @Override
             public void onResponse(Summoner response, Error error)
@@ -73,7 +72,7 @@ public class Widget extends AppWidgetProvider
                     // fill the new data in the profile
                     profile.set(Utils.getRegionFromCode(RegionCode.from(regionCodeSP)), response.getName(), response.getId(), response.getProfileIconId(), response.getSummonerLevel());
 
-                    summonerRequest.getLeagueRanks(profile.getId().toString(), Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<List<RankedData>>()
+                    summonerRequest.getLeagueRanks(profile.getId().toString(), new SummonerRequest.SummonerResponseCallback<List<RankedData>>()
                     {
                         @Override
                         public void onResponse(List<RankedData> response, Error error)

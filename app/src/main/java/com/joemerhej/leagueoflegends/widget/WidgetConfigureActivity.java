@@ -386,7 +386,8 @@ public class WidgetConfigureActivity extends Activity
         // make the request to fetch new data
         final Region selectedRegion = mRegionSpinnerAdapter.getRegions().get(mRegionSpinner.getSelectedItemPosition());
         final SummonerRequest summonerRequest = new SummonerRequest(selectedRegion.getCode());
-        summonerRequest.getSummoner(summonerName, Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<Summoner>()
+
+        summonerRequest.getSummoner(summonerName, new SummonerRequest.SummonerResponseCallback<Summoner>()
         {
             @Override
             public void onResponse(Summoner response, Error error)
@@ -396,7 +397,7 @@ public class WidgetConfigureActivity extends Activity
                     // fill the new data in mProfile
                     mProfile.set(selectedRegion, response.getName(), response.getId(), response.getProfileIconId(), response.getSummonerLevel());
 
-                    summonerRequest.getLeagueRanks(mProfile.getId().toString(), Utils.getApiKey(), new SummonerRequest.SummonerResponseCallback<List<RankedData>>()
+                    summonerRequest.getLeagueRanks(mProfile.getId().toString(), new SummonerRequest.SummonerResponseCallback<List<RankedData>>()
                     {
                         @Override
                         public void onResponse(List<RankedData> response, Error error)

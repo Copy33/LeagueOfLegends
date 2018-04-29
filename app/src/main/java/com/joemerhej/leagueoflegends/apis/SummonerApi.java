@@ -8,7 +8,6 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
-import retrofit2.http.Query;
 
 /**
  * Created by Joe Merhej on 4/13/18.
@@ -16,11 +15,11 @@ import retrofit2.http.Query;
 
 public interface SummonerApi
 {
-    @GET("lol/summoner/v3/summoners/by-name/{summonerName}")
-    Call<Summoner> getSummoner(@Path("summonerName") String summonerName,
-                               @Query("api_key") String apiKey);
+    @GET("summoner/{region}/{name}")
+    Call<Summoner> getSummoner(@Path("region") String region,
+                               @Path("name") String summonerName);
 
-    @GET("lol/league/v3/positions/by-summoner/{summonerId}")
-    Call<List<RankedData>> getLeagueRanks(@Path("summonerId") String summonerId,
-                                          @Query("api_key") String apiKey);
+    @GET("leagues/{region}/{id}")
+    Call<List<RankedData>> getLeagueRanks(@Path("region") String region,
+                                          @Path("id") String summonerId);
 }

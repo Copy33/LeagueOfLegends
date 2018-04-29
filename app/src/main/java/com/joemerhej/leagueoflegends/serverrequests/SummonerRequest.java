@@ -23,9 +23,10 @@ public class SummonerRequest
 {
     private static final String TAG = "SummonerRequest";
 
-    private String mBaseUrl = "";
+    private String mBaseUrl;
     private Retrofit mRetrofit;
     private SummonerApi mSummonerApi;
+    private String mRegionCode;
 
 
     public interface SummonerResponseCallback<T>
@@ -38,14 +39,15 @@ public class SummonerRequest
 
     public SummonerRequest(RegionCode regionCode)
     {
-        mBaseUrl = "https://" + regionCode.value() + ".api.riotgames.com/";
+        mRegionCode = regionCode.value();
+        mBaseUrl = "https://fedwepxab0.execute-api.us-east-2.amazonaws.com/rgapi/";
         mRetrofit = RetrofitClient.getClient(mBaseUrl);
         mSummonerApi = mRetrofit.create(SummonerApi.class);
     }
 
-    public void getSummoner(final String summonerName, final String apiKey, final SummonerResponseCallback<Summoner> summonerResponseCallback)
+    public void getSummoner(final String summonerName, final SummonerResponseCallback<Summoner> summonerResponseCallback)
     {
-        Call<Summoner> call = mSummonerApi.getSummoner(summonerName, apiKey);
+        Call<Summoner> call = mSummonerApi.getSummoner(mRegionCode, summonerName);
         call.enqueue(new Callback<Summoner>()
         {
             @Override
@@ -102,9 +104,9 @@ public class SummonerRequest
         });
     }
 
-    public void getLeagueRanks(final String summonerId, final String apiKey, final SummonerResponseCallback<List<RankedData>> summonerResponseCallback)
+    public void getLeagueRanks(final String summonerId, final SummonerResponseCallback<List<RankedData>> summonerResponseCallback)
     {
-        Call<List<RankedData>> call = mSummonerApi.getLeagueRanks(summonerId, apiKey);
+        Call<List<RankedData>> call = mSummonerApi.getLeagueRanks(mRegionCode, summonerId);
         call.enqueue(new Callback<List<RankedData>>()
         {
             @Override
